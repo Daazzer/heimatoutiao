@@ -5,10 +5,15 @@ html {
   font-size: 10vw;
 }
 body {
-  font-size: 16px;
+  background-color: #f2f2f2;
   color: #2c3e50;
+  font-size: 0.444444rem;
 }
 a {
   text-decoration: none;
-  color: #2c3e50;
+  color: #3385ff;
+}
+input, button {
+  outline: none;
+  border: none;
 }

@@ -1,33 +1,40 @@
 <template>
-  <div>
-    <div class="container">
-      <div class="close"><span class="iconfont iconicon-test"></span></div>
-      <div class="logo"><span class="iconfont iconnew"></span></div>
-      <div class="inputs">
-        <input placeholder="请输入手机号" class="input" />
-        <input
-          placeholder="密码"
-          class="input"
-          type="password"
-        />
-      </div>
+  <div class="login">
+    <div class="close">
+      <span class="iconfont iconicon-test"></span>
+    </div>
+    <div class="logo">
+      <span class="iconfont iconnew"></span>
+    </div>
+    <form class="login-form">
+      <input placeholder="用户名" maxlength="11" />
+      <input placeholder="密码" type="password" />
       <p class="tips">
         没有账号？
         <a href="#/register" class="">去注册</a>
       </p>
-      <div data-v-4bc01e24="" class="button">登录按钮</div>
-    </div>
+      <button class="login-btn" type="submit">登录</button>
+    </form>
   </div>
 </template>
 
+<script>
+export default {
+  name: 'Login'
+}
+</script>
+
 <style lang="scss" scoped>
-.container {
+$page: login;
+
+.#{$page} {
   padding: 20px;
 }
 
 .close {
-  span {
+  .iconicon-test {
     font-size: 0.75rem;
+    color: #3d3d3d;
   }
 }
 
@@ -41,18 +48,33 @@
   }
 }
 
-.inputs {
+.#{$page}-form {
   input {
-    margin-bottom: 20px;
+    display: block;
+    width: 100%;
+    margin-bottom: 0.555556rem;
+    padding: 0.416667rem 0;
+    border-bottom: 2px solid #757575;
+    background-color: #f2f2f2;
+    font-size: 0.5rem;
   }
-}
 
-.tips {
-  text-align: right;
-  margin-bottom: 20px;
+  .tips {
+    text-align: right;
+    margin-bottom: 0.555556rem;
+  }
 
-  a {
-    color: #3385ff;
+  .#{$page}-btn {
+    $loginBtnHeight: 1.333333rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: $loginBtnHeight;
+    font-size: 0.5rem;
+    background-color: #cc3300;
+    color: #fff;
+    border-radius: $loginBtnHeight / 2;
   }
 }
 </style>
