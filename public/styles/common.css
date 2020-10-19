@@ -1,0 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  font-size: 10vw;
+}
+body {
+  font-size: 16px;
+  color: #2c3e50;
+}
+a {
+  text-decoration: none;
+  color: #2c3e50;
+}

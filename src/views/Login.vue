@@ -27,17 +27,16 @@
 
 .close {
   span {
-    font-size: 27 / 360 * 100vw;
+    font-size: 0.75rem;
   }
 }
 
 .logo {
   display: flex;
   justify-content: center;
-
   span {
     display: block;
-    font-size: 126 / 360 * 100vw;
+    font-size: 3.5rem;
     color: #d81e06;
   }
 }
