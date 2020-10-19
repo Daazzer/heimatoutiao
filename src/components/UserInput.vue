@@ -2,9 +2,9 @@
   <div class="input-group">
     <input
       :class="{
-        'toutiao-input': status === 0 || true,
-        'toutiao-input-success': status === 1,
-        'toutiao-input-danger': status === 2,
+        'user-input': status === 0 || true,
+        'user-input-success': status === 1,
+        'user-input-danger': status === 2,
       }"
       v-bind="$attrs"
       :value="value"
@@ -19,7 +19,7 @@
 <script>
 export default {
   inheritAttrs: false,
-  name: 'ToutiaoInput',
+  name: 'UserInput',
   props: {
     value: {
       type: String
@@ -68,7 +68,7 @@ export default {
 .input-group {
   margin-bottom: 0.555556rem;
 }
-.toutiao-input {
+.user-input {
   display: block;
   width: 100%;
   padding: 0.416667rem 0;
