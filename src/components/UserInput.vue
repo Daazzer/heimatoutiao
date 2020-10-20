@@ -12,7 +12,7 @@
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <p class="input-tips" v-show="isShowTips">{{ tipsMsg }}</p>
+    <p class="input-tips" v-if="tipsMsg !== ''" v-show="isShowTips">{{ tipsMsg }}</p>
   </div>
 </template>
 
@@ -28,10 +28,7 @@ export default {
       type: RegExp,
       required: true
     },
-    tipsMsg: {
-      type: String,
-      default: '请输入内容'
-    }
+    tipsMsg: String
   },
   data () {
     return {
