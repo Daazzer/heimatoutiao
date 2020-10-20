@@ -22,7 +22,7 @@
       <PersonalOption title="设置" />
     </div>
     <b-container fluid>
-      <UserButton>退出</UserButton>
+      <UserButton @click="logout">退出</UserButton>
     </b-container>
   </b-container>
 </template>
@@ -36,6 +36,12 @@ export default {
   components: {
     PersonalOption,
     UserButton
+  },
+  methods: {
+    logout () {
+      window.localStorage.removeItem('heimatoutiao_token')
+      this.$router.push({ name: 'Login' })
+    }
   }
 }
 </script>

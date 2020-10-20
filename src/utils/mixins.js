@@ -1,28 +1,19 @@
 import api from '@/api'
-import router from '@/router'
+
+function alertMsg (variant, message) {
+  this.$bvToast.toast(message, {
+    variant,
+    autoHideDelay: 2000,
+    toaster: 'b-toaster-top-center',
+    noCloseButton: true,
+    bodyClass: 'alert-text_body'
+  })
+}
 
 export default {
   created () {
+    // 全局混入 api 和 bootstrap 的 toast 弹出框组件
     this.$api = api
-    this.$alertMsgBox = (variant, message) => {
-      this.$bvToast.toast(message, {
-        variant,
-        autoHideDelay: 2000,
-        toaster: 'b-toaster-top-center',
-        noCloseButton: true,
-        bodyClass: 'alert-text_body'
-      })
-    }
-  },
-  mounted () {
-    // 全局路由守卫
-    router.beforeEach((to, from, next) => {
-      const token = window.localStorage.getItem('heimatoutiao_token')
-      if (!token || to.name === 'personal') {
-        this.$alertMsgBox('danger', '请先登录')
-        next({ name: 'Login' })
-      }
-      next()
-    })
+    this.$alertMsgBox = alertMsg.bind(this)
   }
 }

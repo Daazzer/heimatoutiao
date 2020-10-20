@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { BootstrapVue } from 'bootstrap-vue'
+import { ButtonPlugin, LayoutPlugin, ToastPlugin, LinkPlugin } from 'bootstrap-vue'
 import App from './App.vue'
 import router from './router'
 // import store from './store'
@@ -7,7 +7,11 @@ import mixins from './utils/mixins'
 
 Vue.config.productionTip = false
 
-Vue.use(BootstrapVue)
+Vue
+  .use(ButtonPlugin)
+  .use(LayoutPlugin)
+  .use(ToastPlugin)
+  .use(LinkPlugin)
 
 Vue.mixin(mixins)
 

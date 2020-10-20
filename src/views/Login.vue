@@ -70,7 +70,7 @@ export default {
         this.$alertMsgBox('danger', '登录失败，' + res.data.message)
       } else {
         window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
-        this.$alertMsgBox('success', '登录成功')
+        this.$root.$router.push({ name: 'Personal' })
       }
     }
   }
