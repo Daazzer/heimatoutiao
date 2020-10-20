@@ -1,10 +1,10 @@
 <template>
-  <div class="input-group">
+  <div class="user-input-group">
     <input
       :class="{
         'user-input': status === 0 || true,
         'user-input-success': status === 1,
-        'user-input-danger': status === 2,
+        'user-input-danger': status === 2
       }"
       v-bind="$attrs"
       :value="value"
@@ -12,7 +12,7 @@
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <p class="input-tips" v-if="tipsMsg !== ''" v-show="isShowTips">{{ tipsMsg }}</p>
+    <p class="user-input-tips" v-if="tipsMsg !== ''" v-show="isShowTips">{{ tipsMsg }}</p>
   </div>
 </template>
 
@@ -62,11 +62,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.input-group {
+.user-input-group {
   margin-bottom: 0.555556rem;
 }
 .user-input {
-  display: block;
   width: 100%;
   padding: 0.416667rem 0;
   margin-bottom: 0.277778rem;
@@ -81,7 +80,7 @@ export default {
     border-bottom-color: #ff4d4d;
   }
 }
-.input-tips {
+.user-input-tips {
   color: #949494;
 }
 </style>

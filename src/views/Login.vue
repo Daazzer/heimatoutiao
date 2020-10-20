@@ -20,9 +20,16 @@
       />
       <p class="tips">
         没有账号？
-        <router-link to="/register">去注册</router-link>
+        <b-link to="/register">去注册</b-link>
       </p>
-      <Button class="login-btn" native-type="submit" @click="login">登录</Button>
+      <b-button
+        pill
+        variant="danger"
+        :pressed="false"
+        class="login-btn shadow-none"
+        type="submit"
+        @click="login"
+      >登录</b-button>
     </form>
   </div>
 </template>
@@ -30,14 +37,12 @@
 <script>
 import UserInput from '@/components/UserInput.vue'
 import LogoHeader from '@/components/LogoHeader.vue'
-import { Button, Toast } from 'vant'
 
 export default {
   name: 'Login',
   components: {
     UserInput,
-    LogoHeader,
-    Button
+    LogoHeader
   },
   data () {
     return {
@@ -50,26 +55,26 @@ export default {
     }
   },
   methods: {
-    login (e) {
+    async login (e) {
       e.preventDefault()
       const { username, password } = this.user
       const userName = username.trim()
       const userPassword = password.trim()
       if (userName === '' || userPassword === '') {
-        return Toast.fail('输入框不能为空')
+        return this.$alertMsgBox('danger', '输入框不能为空')
       } else if (!this.validateName.test(userName) || !this.validatePassword.test(userPassword)) {
-        return Toast.fail('用户名或密码错误')
+        return this.$alertMsgBox('danger', '用户名或密码错误')
       }
 
-      this.$api.login(this.user).then(res => {
-        console.log(res)
-        if (!res.data.statusCode) {
-          window.localStorage.setItem('token', res.data.data.token)
-          Toast.success(res.data.message)
-        } else {
-          Toast.fail('登录失败，' + res.data.message)
-        }
-      })
+      // 同步获取响应或错误
+      const [err, res] = await this.$api.login(this.user)
+
+      if (err) {
+        this.$alertMsgBox('danger', '登录失败，' + err.message)
+      } else if (!res.data.statusCode) {
+        window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
+        this.$alertMsgBox('success', '登录成功')
+      }
     }
   }
 }
@@ -88,16 +93,15 @@ $page: login;
   }
 
   .#{$page}-btn {
-    $loginBtnHeight: 1.333333rem;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: $loginBtnHeight;
+    height: 1.333333rem;
     font-size: 0.5rem;
+    border: none;
     background-color: #cc3300;
     color: #fff;
-    border-radius: $loginBtnHeight / 2;
   }
 }
 </style>

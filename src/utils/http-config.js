@@ -2,10 +2,14 @@ import axios from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:3000'
 
-const token = window.localStorage.getItem('token')
-
-if (token) {
-  axios.defaults.headers.Authorization = token
-}
+axios.interceptors.request.use(config => {
+  const token = window.localStorage.getItem('heimatoutiao_token')
+  if (token) {
+    return config.headers.Authorization = token
+  }
+  return config
+}, error => {
+  return Promise.reject(error)
+})
 
 export default axios

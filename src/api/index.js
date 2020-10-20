@@ -5,9 +5,8 @@ class Api {
     this.loginUrl = '/login'
   }
 
-  async login(data) {
-    const res = await axios.post(this.loginUrl, data)
-    return res
+  login (data) {
+    return axios.post(this.loginUrl, data).then(res => [null, res]).catch(err => [err])
   }
 }
 

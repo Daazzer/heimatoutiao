@@ -26,22 +26,27 @@
         maxlength="16"
         tipsMsg="请输入3-16位大小写字母与数字混合的密码"
       />
-      <Button class="register-btn" native-type="submit" @click="login">注册</Button>
+      <b-button
+        pill
+        variant="danger"
+        :pressed="false"
+        class="register-btn shadow-none"
+        type="submit"
+        @click="login"
+      >注册</b-button>
     </form>
   </div>
 </template>
 
 <script>
-import UserInput from '@/components/UserInput.vue'
 import LogoHeader from '@/components/LogoHeader.vue'
-import { Button, Toast } from 'vant'
+import UserInput from '@/components/UserInput.vue'
 
 export default {
   name: 'Register',
   components: {
     UserInput,
-    LogoHeader,
-    Button
+    LogoHeader
   },
   data () {
     return {

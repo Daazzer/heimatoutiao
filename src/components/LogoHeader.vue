@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="close">
+    <button class="close-btn">
       <span class="iconfont iconicon-test"></span>
-    </div>
+    </button>
     <div class="logo">
       <span class="iconfont iconnew"></span>
     </div>
@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.close {
+.close-btn {
   .iconicon-test {
     font-size: 0.75rem;
     color: #3d3d3d;
