@@ -22,27 +22,22 @@
         没有账号？
         <b-link to="/register">去注册</b-link>
       </p>
-      <b-button
-        pill
-        variant="danger"
-        :pressed="false"
-        class="login-btn shadow-none"
-        type="submit"
-        @click="login"
-      >登录</b-button>
+      <UserButton @click="login">登录</UserButton>
     </form>
   </div>
 </template>
 
 <script>
-import UserInput from '@/components/UserInput.vue'
 import LogoHeader from '@/components/LogoHeader.vue'
+import UserInput from '@/components/UserInput.vue'
+import UserButton from '@/components/UserButton.vue'
 
 export default {
   name: 'Login',
   components: {
     UserInput,
-    LogoHeader
+    LogoHeader,
+    UserButton
   },
   data () {
     return {
@@ -70,8 +65,10 @@ export default {
       const [err, res] = await this.$api.login(this.user)
 
       if (err) {
-        this.$alertMsgBox('danger', '登录失败，' + err.message)
-      } else if (!res.data.statusCode) {
+        this.$alertMsgBox('danger', '登录失败，发生错误')
+      } else if (res.data.statusCode) {
+        this.$alertMsgBox('danger', '登录失败，' + res.data.message)
+      } else {
         window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
         this.$alertMsgBox('success', '登录成功')
       }
@@ -90,18 +87,6 @@ $page: login;
   .tips {
     text-align: right;
     margin-bottom: 1rem;
-  }
-
-  .#{$page}-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 1.333333rem;
-    font-size: 0.5rem;
-    border: none;
-    background-color: #cc3300;
-    color: #fff;
   }
 }
 </style>

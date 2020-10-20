@@ -16,6 +16,9 @@ body {
 a {
   text-decoration: none;
   color: #3385ff;
+  &:hover {
+    text-decoration: none;
+  }
 }
 input, button {
   outline: none;

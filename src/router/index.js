@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { BvToastOptions } from 'bootstrap-vue'
 
 Vue.use(VueRouter)
 
@@ -13,6 +14,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
+  },
+  {
+    path: '/personal',
+    name: 'Personal',
+    component: () => import(/* webpackChunkName: "personal" */ '@/views/Personal.vue')
   },
   {
     path: '/register',
