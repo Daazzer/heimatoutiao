@@ -59,10 +59,14 @@ export default {
       const { username, password } = this.user
       const userName = username.trim()
       const userPassword = password.trim()
+      const token = window.localStorage.getItem('heimatoutiao_token')
+
       if (userName === '' || userPassword === '') {
         return this.$alertMsgBox('danger', '输入框不能为空')
       } else if (!this.validateName.test(userName) || !this.validatePassword.test(userPassword)) {
         return this.$alertMsgBox('danger', '用户名或密码错误')
+      } else if (token) {
+        return this.$alertMsgBox('warning', '你已登录，请不要重复登录')
       }
 
       // 同步获取响应或错误
