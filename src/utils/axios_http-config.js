@@ -12,4 +12,11 @@ axios.interceptors.request.use(config => {
   return Promise.reject(error)
 })
 
+/* const interceptors = axios.interceptors.response.use(response => {
+  console.log(response)
+  return response
+}, error => {
+  return Promise.reject(error)
+}) */
+
 export default axios

@@ -10,8 +10,8 @@ export default {
     // 全局路由守卫
     router.beforeEach((to, from, next) => {
       const token = window.localStorage.getItem('heimatoutiao_token')
-      const toRouteName = to.name
-      const fromRouteName = from.name
+      const { name: toRouteName, params: { isLogin } } = to
+      const { name: fromRouteName } = from
 
       switch (toRouteName) {
         case 'Personal':
@@ -19,7 +19,7 @@ export default {
             this.$alertMsgBox('danger', '请先登录')
             next({ name: 'Login' })
             return
-          } else if (token && fromRouteName === 'Login') {
+          } else if (token && fromRouteName === 'Login' && isLogin) {
             this.$alertMsgBox('success', '登录成功')
           }
           next()
@@ -32,7 +32,6 @@ export default {
           break
         default:
           next()
-          break
       }
     })
   }

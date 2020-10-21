@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import { BvToastOptions } from 'bootstrap-vue'
 
 Vue.use(VueRouter)
 

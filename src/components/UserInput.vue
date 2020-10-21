@@ -4,22 +4,33 @@
       :class="{
         'user-input': status === 0 || true,
         'user-input-success': status === 1,
-        'user-input-danger': status === 2
+        'user-input-danger': status === 2,
       }"
       v-bind="$attrs"
       :value="value"
+      :id="id"
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <p class="user-input-tips" v-if="tipsMsg !== ''" v-show="isShowTips">{{ tipsMsg }}</p>
+    <BTooltip
+      custom-class="user-input-tips"
+      v-if="tipsMsg !== ''"
+      :target="id"
+      placement="bottomleft"
+    >{{ tipsMsg }}</BTooltip>
   </div>
 </template>
 
 <script>
+import { BTooltip } from 'bootstrap-vue'
+
 export default {
   inheritAttrs: false,
   name: 'UserInput',
+  components: {
+    BTooltip
+  },
   props: {
     value: {
       type: String
@@ -28,7 +39,11 @@ export default {
       type: RegExp,
       required: true
     },
-    tipsMsg: String
+    tipsMsg: String,
+    id: {
+      type: String,
+      required: true
+    }
   },
   data () {
     return {
@@ -81,6 +96,18 @@ export default {
   }
 }
 .user-input-tips {
-  color: #949494;
+  font-size: .2rem;
+  ::v-deep .tooltip-inner {
+    max-width: none;
+    padding: .2rem;
+  }
+  ::v-deep .arrow {
+    left: 0 !important;
+  }
+  ::v-deep .arrow::before {
+    position: absolute;
+    bottom: 0;
+    border-width: 0 .25rem .25rem;
+  }
 }
 </style>

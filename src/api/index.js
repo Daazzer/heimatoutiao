@@ -1,4 +1,4 @@
-import axios from '@/utils/http-config'
+import axios from '@/utils/axios_http-config'
 
 class Api {
   constructor() {

@@ -9,14 +9,18 @@
         :rules="validateName"
         maxlength="11"
         tipsMsg="请输入用户名或合法的11位手机号码"
+        id="userName"
+        name="username"
       />
       <UserInput
         placeholder="昵称"
         type="text"
-        v-model="user.username"
+        v-model="user.nickname"
         :rules="validateName"
         maxlength="11"
         tipsMsg="请输入昵称"
+        id="nickName"
+        name="nickname"
       />
       <UserInput
         placeholder="密码"
@@ -25,6 +29,8 @@
         :rules="validatePassword"
         maxlength="16"
         tipsMsg="请输入3-16位大小写字母与数字混合的密码"
+        id="passWord"
+        name="password"
       />
       <b-button
         pill
@@ -52,6 +58,7 @@ export default {
     return {
       user: {
         username: '',
+        nickname: '',
         password: ''
       },
       validateName: /(?:^\w{4,5}$|^1[35789]\d{9}$)/,

@@ -9,6 +9,8 @@
         :rules="validateName"
         maxlength="11"
         tipsMsg="请输入用户名或合法的11位手机号码"
+        name="username"
+        id="userName"
       />
       <UserInput
         placeholder="密码"
@@ -17,6 +19,8 @@
         :rules="validatePassword"
         maxlength="16"
         tipsMsg="请输入3-16位密码"
+        name="password"
+        id="passWord"
       />
       <p class="tips">
         没有账号？
@@ -70,7 +74,7 @@ export default {
         this.$alertMsgBox('danger', '登录失败，' + res.data.message)
       } else {
         window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
-        this.$root.$router.push({ name: 'Personal' })
+        this.$root.$router.push({ name: 'Personal', params: { isLogin: true } })
       }
     }
   }
