@@ -1,17 +1,20 @@
-* {
+/* * {
   box-sizing: border-box;
-}
-html {
+} */
+/* html {
   font-size: 10vw;
+} */
+@function baseSize($size) {
+  @return $size / 360 * 100vw
 }
 body {
   min-width: 360px;
   max-width: 750px;
-  width: 100%;
+  // width: 100%;
   margin: 0 auto;
   background-color: #f2f2f2;
   color: #2c3e50;
-  font-size: 0.444444rem;
+  font-size: baseSize(16);
 }
 a {
   text-decoration: none;
@@ -26,7 +29,7 @@ input, button {
 }
 .alert-text_body {
   text-align: center;
-  font-size: 0.444444rem;
+  font-size: baseSize(16);
 }
 .edit-modal, .edit-modal .btn  {
   font-size: .444444rem;
@@ -43,7 +46,7 @@ input, button {
 .edit-modal .modal-footer {
   padding: 0.416667rem;
 }
-@media screen and (max-width: 360px) {
+/* @media screen and (max-width: 360px) {
   html {
     font-size: 36px;
   }
@@ -52,4 +55,4 @@ input, button {
   html {
     font-size: 75px;
   }
-}
+} */

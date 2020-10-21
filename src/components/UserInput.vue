@@ -15,9 +15,10 @@
     />
     <BTooltip
       custom-class="user-input-tips"
+      triggers="focus"
       v-if="tipsMsg !== ''"
+      placement="bottom"
       :target="id"
-      placement="bottomleft"
     >{{ tipsMsg }}</BTooltip>
   </div>
 </template>
@@ -77,16 +78,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/common.scss";
+
 .user-input-group {
-  margin-bottom: 0.555556rem;
+  margin-bottom: common.baseSize(15);
 }
 .user-input {
   width: 100%;
-  padding: 0.416667rem 0;
-  margin-bottom: 0.277778rem;
+  padding: common.baseSize(15) 0;
+  margin-bottom: common.baseSize(24);
   border-bottom: 2px solid #757575;
   background-color: #f2f2f2;
-  font-size: 0.5rem;
+  font-size: common.baseSize(18);
 
   &-success {
     border-bottom-color: #0dbc79;
@@ -96,18 +99,10 @@ export default {
   }
 }
 .user-input-tips {
-  font-size: .2rem;
+  font-size: common.baseSize(10);
   ::v-deep .tooltip-inner {
     max-width: none;
-    padding: .2rem;
-  }
-  ::v-deep .arrow {
-    left: 0 !important;
-  }
-  ::v-deep .arrow::before {
-    position: absolute;
-    bottom: 0;
-    border-width: 0 .25rem .25rem;
+    padding: common.baseSize(5) common.baseSize(10);
   }
 }
 </style>

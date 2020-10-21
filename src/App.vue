@@ -39,16 +39,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "../node_modules/bootstrap-vue/dist/bootstrap-vue.min.css";
 /* @import "./styles/reset.css"; */
 @import "./fonts/iconfont.css";
-@import "./styles/common.css";
-</style>
-
-<style lang="scss">
-@function baseSize($size) {
-  @return $size / 360 * 100vw
-}
+@import "./styles/common.scss";
 </style>

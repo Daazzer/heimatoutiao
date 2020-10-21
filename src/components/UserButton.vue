@@ -16,13 +16,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/common.scss";
+
 .user-btn {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 1.333333rem;
-  font-size: 0.5rem;
+  height: common.baseSize(48);
+  font-size: common.baseSize(20);
   border: none;
   background-color: #cc3300;
   color: #fff;

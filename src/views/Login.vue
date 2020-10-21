@@ -88,15 +88,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/common.scss";
+
 $page: login;
 .#{$page} {
-  padding: 20px;
+  padding: common.baseSize(20);
 }
 
 .#{$page}-form {
   .tips {
     text-align: right;
-    margin-bottom: 1rem;
+    margin-bottom: common.baseSize(36);
   }
 }
 </style>

@@ -16,9 +16,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/common.scss";
+
 .close-btn {
   .iconicon-test {
-    font-size: 0.75rem;
+    font-size: common.baseSize(21);
+    font-weight: 700;
     color: #3d3d3d;
   }
 }
@@ -28,7 +31,7 @@ export default {
   justify-content: center;
   span {
     display: block;
-    font-size: 3.5rem;
+    font-size: common.baseSize(126);
     color: #d81e06;
   }
 }
