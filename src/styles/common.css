@@ -16,9 +16,9 @@ body {
 a {
   text-decoration: none;
   color: #3385ff;
-  &:hover {
-    text-decoration: none;
-  }
+}
+a:hover {
+  text-decoration: none;
 }
 input, button {
   outline: none;
@@ -27,6 +27,21 @@ input, button {
 .alert-text_body {
   text-align: center;
   font-size: 0.444444rem;
+}
+.edit-modal, .edit-modal .btn  {
+  font-size: .444444rem;
+}
+.edit-modal .btn {
+  padding: 0.25rem 0.416667rem;
+  margin: 0 0.277778rem;
+}
+.edit-modal .close {
+  font-size: .8rem;
+}
+.edit-modal .modal-header,
+.edit-modal .modal-body, 
+.edit-modal .modal-footer {
+  padding: 0.416667rem;
 }
 @media screen and (max-width: 360px) {
   html {

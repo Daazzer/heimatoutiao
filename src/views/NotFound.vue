@@ -9,3 +9,7 @@ export default {
   name: 'NotFound'
 }
 </script>
+
+<style lang="scss" scoped>
+h1 { text-align: center; }
+</style>

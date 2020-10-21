@@ -1,5 +1,13 @@
 import Vue from 'vue'
-import { ButtonPlugin, LayoutPlugin, ToastPlugin, LinkPlugin } from 'bootstrap-vue'
+import {
+  ButtonPlugin,
+  LayoutPlugin,
+  ToastPlugin,
+  LinkPlugin,
+  ImagePlugin,
+  FormFilePlugin,
+  ModalPlugin
+} from 'bootstrap-vue'
 import App from './App.vue'
 import router from './router'
 // import store from './store'
@@ -12,6 +20,9 @@ Vue
   .use(LayoutPlugin)
   .use(ToastPlugin)
   .use(LinkPlugin)
+  .use(ImagePlugin)
+  .use(FormFilePlugin)
+  .use(ModalPlugin)
 
 Vue.mixin(mixins)
 

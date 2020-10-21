@@ -10,8 +10,8 @@ export default {
     // 全局路由守卫
     router.beforeEach((to, from, next) => {
       const token = window.localStorage.getItem('heimatoutiao_token')
-      const { name: toRouteName, params: { isLogin } } = to
-      const { name: fromRouteName } = from
+      const { name: toRouteName } = to
+      const { name: fromRouteName, params } = from
 
       switch (toRouteName) {
         case 'Personal':
@@ -19,7 +19,8 @@ export default {
             this.$alertMsgBox('danger', '请先登录')
             next({ name: 'Login' })
             return
-          } else if (token && fromRouteName === 'Login' && isLogin) {
+          // 验证是否真正点击登录
+          } else if (token && fromRouteName === 'Login' && params.id) {
             this.$alertMsgBox('success', '登录成功')
           }
           next()
@@ -41,7 +42,13 @@ export default {
 <style>
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "../node_modules/bootstrap-vue/dist/bootstrap-vue.min.css";
-@import "./styles/reset.css";
+/* @import "./styles/reset.css"; */
 @import "./fonts/iconfont.css";
 @import "./styles/common.css";
+</style>
+
+<style lang="scss">
+@function baseSize($size) {
+  @return $size / 360 * 100vw
+}
 </style>

@@ -78,7 +78,9 @@ export default {
         this.$alertMsgBox('danger', '登录失败，' + res.data.message)
       } else {
         window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
-        this.$root.$router.push({ name: 'Personal', params: { isLogin: true } })
+        const { id } = res.data.data.user
+        this.$route.params.id = id
+        this.$router.push({ path: `/personal/${id}` })
       }
     }
   }

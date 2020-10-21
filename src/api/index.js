@@ -1,12 +1,12 @@
 import axios from '@/utils/axios_http-config'
 
 class Api {
-  constructor() {
-    this.loginUrl = '/login'
+  login (data) {
+    return axios.post('/login', data).then(res => [null, res]).catch(err => [err])
   }
 
-  login (data) {
-    return axios.post(this.loginUrl, data).then(res => [null, res]).catch(err => [err])
+  getUser (id) {
+    return axios.get(`/user/${id}`).then(res => [null, res]).catch(err => [err])
   }
 }
 

@@ -5,19 +5,19 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue')
-  },
-  {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
   },
   {
-    path: '/personal',
+    path: '/personal/:id',
     name: 'Personal',
     component: () => import(/* webpackChunkName: "personal" */ '@/views/Personal.vue')
+  },
+  {
+    path: '/edit_profile/:id',
+    name: 'EditProfile',
+    component: () => import(/* webpackChunkName: "editProfile" */ '@/views/EditProfile.vue')
   },
   {
     path: '/register',

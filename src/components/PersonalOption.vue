@@ -1,8 +1,8 @@
 <template>
-  <b-link class="personal-option">
+  <b-link class="personal-option" @click="$emit('click', $event)">
     <h3>{{ title }}</h3>
     <div>
-      <span class="personal-option_desc" v-if="desc !== ''">{{ desc }}</span>
+      <span class="personal-option_desc" v-if="desc !== ''">{{ type === 'password' ? '******' : desc }}</span>
       <span class="iconfont iconjiantou1 arrow-r"></span>
     </div>
   </b-link>
@@ -19,7 +19,8 @@ export default {
     desc: {
       type: String,
       default: ''
-    }
+    },
+    type: String
   }
 }
 </script>
