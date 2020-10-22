@@ -16,18 +16,15 @@ export default {
       switch (toRouteName) {
         case 'Personal':
           if (!token) {
-            this.$alertMsgBox('danger', '请先登录')
+            this.$toast.fail('请先登录')
             next({ name: 'Login' })
             return
-          // 验证是否真正点击登录
-          } else if (token && fromRouteName === 'Login' && params.id) {
-            this.$alertMsgBox('success', '登录成功')
           }
           next()
           break
         case 'Login':
           if (!token && fromRouteName === 'Personal') {
-            this.$alertMsgBox('success', '退出成功')
+            this.$toast.success('退出成功')
           }
           next()
           break
@@ -40,8 +37,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-@import "../node_modules/bootstrap-vue/dist/bootstrap-vue.min.css";
+// @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+// @import "../node_modules/bootstrap-vue/dist/bootstrap-vue.min.css";
+@import "../node_modules/vant/lib/index.css";
+@import "./styles/reset.css";
 @import "./fonts/iconfont.css";
 @import "./styles/common.scss";
 </style>

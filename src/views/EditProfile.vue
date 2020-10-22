@@ -2,12 +2,10 @@
   <div class="editprofile">
     <UserHeader title="编辑用户资料" :goback="`/personal/${id}`" />
     <div class="avatar">
-      <b-img rounded="circle" :src="headImg" alt="用户头像" />
-      <b-form-file
+      <van-image round :src="headImg" alt="用户头像" />
+      <VanUploader
         class="avatar_uploader"
-        @change="editHeadImg"
-        plain
-        :value="imgFile"
+        :after-read="editHeadImg"
         name="head_img"
       />
     </div>
@@ -19,7 +17,7 @@
       @click="editPassword"
     />
     <PersonalOption title="性别" :desc="getGender" @click="editGender" />
-    <b-modal
+    <!-- <b-modal
       id="editModal"
       ref="modal"
       :title="`编辑${editTitle}`"
@@ -57,12 +55,12 @@
           ></BFormInput>
         </BFormGroup>
       </form>
-    </b-modal>
+    </b-modal> -->
   </div>
 </template>
 
 <script>
-import { BFormGroup, BFormInput, BFormRadio } from 'bootstrap-vue'
+import { Uploader as VanUploader } from 'vant'
 import UserHeader from '@/components/UserHeader.vue'
 import PersonalOption from '@/components/PersonalOption.vue'
 import axios from '@/utils/axios_http-config'
@@ -72,9 +70,7 @@ export default {
   components: {
     PersonalOption,
     UserHeader,
-    BFormGroup,
-    BFormInput,
-    BFormRadio
+    VanUploader
   },
   data () {
     return {
@@ -224,12 +220,12 @@ export default {
 
   $imgSize: common.baseSize(88);
 
-  img {
+  ::v-deep img {
     height: $imgSize;
     width: $imgSize;
   }
 
-  &_uploader {
+  ::v-deep &_uploader {
     @extend img;
     position: absolute;
     left: 50%;

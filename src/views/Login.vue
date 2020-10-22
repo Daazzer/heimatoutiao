@@ -24,7 +24,7 @@
       />
       <p class="tips">
         没有账号？
-        <b-link to="/register">去注册</b-link>
+        <router-link to="/register">去注册</router-link>
       </p>
       <UserButton @click.prevent="login">登录</UserButton>
     </form>
@@ -61,24 +61,25 @@ export default {
       const token = window.localStorage.getItem('heimatoutiao_token')
 
       if (userName === '' || userPassword === '') {
-        return this.$alertMsgBox('danger', '输入框不能为空')
+        return this.$toast.fail('输入框不能为空')
       } else if (!this.validateUsername.test(userName) || !this.validatePassword.test(userPassword)) {
-        return this.$alertMsgBox('danger', '用户名或密码错误')
+        return this.$toast.fail('用户名或密码错误')
       } else if (token) {
-        return this.$alertMsgBox('warning', '你已登录，请不要重复登录')
+        return this.$toast.fail('你已登录，请不要重复登录')
       }
 
       // 同步获取响应或错误
       const [err, res] = await this.$api.login(this.user)
 
       if (err) {
-        this.$alertMsgBox('danger', '登录失败，发生错误')
+        this.$toast.fail('登录失败，发生错误')
       } else if (res.data.statusCode) {
-        this.$alertMsgBox('danger', '登录失败，' + res.data.message)
+        this.$toast.fail('登录失败，' + res.data.message)
       } else {
         window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
         const { id } = res.data.data.user
         this.$route.params.id = id
+        this.$toast.success('登录成功')
         this.$router.push({ path: `/personal/${id}` })
       }
     }

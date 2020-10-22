@@ -1,13 +1,5 @@
 import Vue from 'vue'
-import {
-  ButtonPlugin,
-  LayoutPlugin,
-  ToastPlugin,
-  LinkPlugin,
-  ImagePlugin,
-  FormFilePlugin,
-  ModalPlugin
-} from 'bootstrap-vue'
+import { Toast, Image } from 'vant'
 import App from './App.vue'
 import router from './router'
 // import store from './store'
@@ -16,13 +8,8 @@ import mixins from './utils/mixins'
 Vue.config.productionTip = false
 
 Vue
-  .use(ButtonPlugin)
-  .use(LayoutPlugin)
-  .use(ToastPlugin)
-  .use(LinkPlugin)
-  .use(ImagePlugin)
-  .use(FormFilePlugin)
-  .use(ModalPlugin)
+  .use(Toast)
+  .use(Image)
 
 Vue.mixin(mixins)
 

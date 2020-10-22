@@ -13,25 +13,16 @@
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <BTooltip
-      custom-class="user-input-tips"
-      triggers="focus"
-      v-if="tipsMsg !== ''"
-      placement="bottom"
-      :target="id"
-    >{{ tipsMsg }}</BTooltip>
+    <div class="user-input-tips">
+      <p>{{ isShowTips ? tipsMsg : '' }}</p>
+    </div>
   </div>
 </template>
 
 <script>
-import { BTooltip } from 'bootstrap-vue'
-
 export default {
   inheritAttrs: false,
   name: 'UserInput',
-  components: {
-    BTooltip
-  },
   props: {
     value: {
       type: String
@@ -85,7 +76,7 @@ export default {
 .user-input {
   width: 100%;
   padding: common.baseSize(15) 0;
-  margin-bottom: common.baseSize(24);
+  margin-bottom: common.baseSize(5);
   border: none;
   border-bottom: 2px solid #757575;
   background-color: #f2f2f2;
@@ -100,6 +91,8 @@ export default {
 }
 .user-input-tips {
   font-size: common.baseSize(10);
+  min-height: common.baseSize(14);
+  color: #757575;
   ::v-deep .tooltip-inner {
     max-width: none;
     padding: common.baseSize(5) common.baseSize(10);

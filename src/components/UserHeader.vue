@@ -1,21 +1,21 @@
 <template>
   <header>
-    <b-link class="back" :to="goback">
+    <router-link class="back" :to="goback">
       <span class="iconfont iconjiantou2"></span>
-    </b-link>
+    </router-link>
     <h1>{{ title }}</h1>
-    <b-link to="/">
-      <BIconHouseDoor class="home-icon" />
-    </b-link>
+    <router-link to="/">
+      <VanIcon name="wap-home-o" class="home-icon" />
+    </router-link>
   </header>
 </template>
 
 <script>
-import { BIconHouseDoor } from 'bootstrap-vue'
+import { Icon as VanIcon } from 'vant'
 export default {
   name: 'UserHeader',
   components: {
-    BIconHouseDoor
+    VanIcon
   },
   props: {
     title: {

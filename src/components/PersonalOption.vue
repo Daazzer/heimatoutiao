@@ -1,11 +1,11 @@
 <template>
-  <b-link class="personal-option" @click="$emit('click', $event, title)">
+  <router-link class="personal-option" to="#" @click="$emit('click', $event, title)">
     <h3>{{ title }}</h3>
     <div>
       <span class="personal-option_desc" v-if="desc !== ''">{{ type === 'password' ? '******' : desc }}</span>
       <span class="iconfont iconjiantou1 arrow-r"></span>
     </div>
-  </b-link>
+  </router-link>
 </template>
 
 <script>

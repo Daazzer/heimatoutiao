@@ -1,26 +1,23 @@
-* {
-  box-sizing: border-box;
-}
 @function baseSize($size) {
   @return $size / 360 * 100vw
+}
+* {
+  box-sizing: border-box;
 }
 body {
   min-width: 360px;
   max-width: 750px;
-  width: 100%;
   margin: 0 auto;
+  font-size: baseSize(16);
   background-color: #f2f2f2;
 }
 a {
   text-decoration: none;
-}
-a:hover {
-  text-decoration: none;
+  color: #007bff;
+  &:hover {
+    text-decoration: none;
+  }
 }
 input, button {
   outline: none;
-}
-.alert-text_body {
-  text-align: center;
-  font-size: baseSize(16);
 }

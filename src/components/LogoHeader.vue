@@ -21,7 +21,6 @@ export default {
 button {
   border: none;
 }
-
 .close-btn {
   background-color: transparent;
   .iconicon-test {
@@ -30,7 +29,6 @@ button {
     color: #3d3d3d;
   }
 }
-
 .logo {
   display: flex;
   justify-content: center;

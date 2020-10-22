@@ -1,6 +1,6 @@
 <template>
-  <b-container class="personal" fluid>
-    <b-link class="personal_link" :to="`/edit_profile/${$route.params.id}`">
+  <div class="personal">
+    <router-link class="personal_link" :to="`/edit_profile/${$route.params.id}`">
       <div class="profile">
         <img :src="headImg" alt="用户头像" />
         <div class="profile_center">
@@ -14,17 +14,17 @@
         </div>
         <span class="iconfont iconjiantou1 arrow-r"></span>
       </div>
-    </b-link>
+    </router-link>
     <div class="personal_option-group">
       <PersonalOption title="我的关注" desc="关注的用户" />
       <PersonalOption title="我的跟帖" desc="跟帖/回复" />
       <PersonalOption title="我的收藏" desc="文章/视频" />
       <PersonalOption title="设置" />
     </div>
-    <b-container fluid>
+    <div class="personal_btn-wrapper">
       <UserButton @click="logout">退出</UserButton>
-    </b-container>
-  </b-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -109,6 +109,9 @@ export default {
   }
   &_option-group {
     margin-bottom: common.baseSize(36);
+  }
+  &_btn-wrapper {
+    padding: 0 common.baseSize(20);
   }
 }
 
