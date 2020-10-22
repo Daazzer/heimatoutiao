@@ -100,13 +100,15 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+@use "@/styles/common.scss";
+
 .personal {
   padding: 0;
   &_link {
     display: block;
   }
   &_option-group {
-    margin-bottom: 1rem;
+    margin-bottom: common.baseSize(36);
   }
 }
 
@@ -114,13 +116,13 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 0.416667rem 0 0.638889rem;
-  height: 3.722222rem;
-  border-bottom: 0.138889rem #e4e4e4 solid;
+  padding: 0 common.baseSize(15) 0 common.baseSize(24);
+  height: common.baseSize(130);
+  border-bottom: common.baseSize(5) #e4e4e4 solid;
   color: #333;
 
   img {
-    $size: 1.944444rem;
+    $size: common.baseSize(70);
     width: $size;
     height: $size;
     border-radius: 50%;
@@ -128,26 +130,27 @@ export default {
 
   &_center {
     flex: 1;
-    padding: 0 0.277778rem;
+    padding: 0 common.baseSize(14);
   }
 
   .name {
-    margin-bottom: 0.277778rem;
-    font-size: 0.388889rem;
+    $fontSize: common.baseSize(16);
+    margin-bottom: common.baseSize(10);
+    font-size: $fontSize;
     .gender-icon {
-      margin-right: 0.166667rem;
-      font-size: 0.388889rem;
+      margin-right: common.baseSize(5);
+      font-size: $fontSize;
       color: #75b9eb;
     }
   }
 
   .time {
     color: #a0a0a0;
-    font-size: 0.277778rem;
+    font-size: common.baseSize(14);
   }
 
   .arrow-r {
-    font-size: 0.388889rem;
+    font-size: common.baseSize(15);
     color: #b6b6b6;
   }
 }

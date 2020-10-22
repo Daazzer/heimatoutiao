@@ -26,15 +26,18 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+@use "@/styles/common.scss";
+
 .personal-option {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 1.388889rem;
-  padding: 0 0.416667rem 0 0.555556rem;
+  height: common.baseSize(50);
+  padding: 0 common.baseSize(15) 0 common.baseSize(20);
   border-bottom: 1px solid #e4e4e4;
-  font-size: 0.388889rem;
+  font-size: common.baseSize(14);
   h3 {
+    font-size: common.baseSize(16);
     color: #202020;
   }
   &_desc {

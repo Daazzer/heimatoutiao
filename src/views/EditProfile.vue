@@ -94,21 +94,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use "@/styles/common.scss";
+
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.555556rem 0.722222rem;
+  padding: common.baseSize(21) common.baseSize(26);
+  $headerFontSize: common.baseSize(20);
   .iconjiantou2 {
-    font-size: 0.555556rem;
+    font-size: $headerFontSize;
   }
   h1 {
-    font-size: 0.555556rem;
+    font-size: $headerFontSize;
     font-weight: 700;
   }
 
   .home-icon {
-    font-size: 0.555556rem;
+    font-size: $headerFontSize;
     color: #ff4f5d;
     display: block;
   }
@@ -117,10 +120,10 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 4.444444rem;
+  height: common.baseSize(170);
   position: relative;
 
-  $imgSize: 2.444444rem;
+  $imgSize: common.baseSize(88);
 
   img {
     height: $imgSize;

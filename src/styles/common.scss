@@ -1,9 +1,9 @@
-/* * {
+* {
   box-sizing: border-box;
-} */
-/* html {
-  font-size: 10vw;
-} */
+}
+// html {
+//   font-size: 10vw;
+// }
 @function baseSize($size) {
   @return $size / 360 * 100vw
 }
@@ -31,28 +31,28 @@ input, button {
   text-align: center;
   font-size: baseSize(16);
 }
-.edit-modal, .edit-modal .btn  {
-  font-size: .444444rem;
-}
-.edit-modal .btn {
-  padding: 0.25rem 0.416667rem;
-  margin: 0 0.277778rem;
-}
-.edit-modal .close {
-  font-size: .8rem;
-}
-.edit-modal .modal-header,
-.edit-modal .modal-body, 
-.edit-modal .modal-footer {
-  padding: 0.416667rem;
-}
-/* @media screen and (max-width: 360px) {
-  html {
-    font-size: 36px;
-  }
-}
-@media screen and (min-width: 750px) {
-  html {
-    font-size: 75px;
-  }
-} */
+// .edit-modal, .edit-modal .btn  {
+//   font-size: .444444rem;
+// }
+// .edit-modal .btn {
+//   padding: 0.25rem 0.416667rem;
+//   margin: 0 0.277778rem;
+// }
+// .edit-modal .close {
+//   font-size: .8rem;
+// }
+// .edit-modal .modal-header,
+// .edit-modal .modal-body, 
+// .edit-modal .modal-footer {
+//   padding: 0.416667rem;
+// }
+// @media screen and (max-width: 360px) {
+//   html {
+//     font-size: 36px;
+//   }
+// }
+// @media screen and (min-width: 750px) {
+//   html {
+//     font-size: 75px;
+//   }
+// }
