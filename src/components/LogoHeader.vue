@@ -23,6 +23,7 @@ button {
 }
 
 .close-btn {
+  background-color: transparent;
   .iconicon-test {
     font-size: common.baseSize(21);
     font-weight: 700;

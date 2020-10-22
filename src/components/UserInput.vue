@@ -56,13 +56,12 @@ export default {
     handleInput (e) {
       this.$emit('input', e.target.value)
 
-      const inputText = e.target.value.trim()
-      const rules = this.rules
-      const isValidated = rules.test(inputText)
-      if (isValidated) {
-        this.status = 1
-      } else if (inputText === '') {
+      const inputText = e.target.value
+      const isValidated = this.rules.test(inputText)
+      if (inputText === '') {
         this.status = 0
+      } else if (isValidated) {
+        this.status = 1
       } else {
         this.status = 2
       }

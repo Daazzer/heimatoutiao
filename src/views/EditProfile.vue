@@ -1,14 +1,6 @@
 <template>
   <div class="editprofile">
-    <header>
-      <b-link class="back" :to="`/personal/${id}`">
-        <span class="iconfont iconjiantou2"></span>
-      </b-link>
-      <h1>编辑用户资料</h1>
-      <b-link to="/">
-        <BIconHouseDoor class="home-icon" />
-      </b-link>
-    </header>
+    <UserHeader title="编辑用户资料" :goback="`/personal/${id}`" />
     <div class="avatar">
       <b-img rounded="circle" :src="headImg" alt="用户头像" />
       <b-form-file
@@ -70,7 +62,8 @@
 </template>
 
 <script>
-import { BIconHouseDoor, BFormGroup, BFormInput, BFormRadio } from 'bootstrap-vue'
+import { BFormGroup, BFormInput, BFormRadio } from 'bootstrap-vue'
+import UserHeader from '@/components/UserHeader.vue'
 import PersonalOption from '@/components/PersonalOption.vue'
 import axios from '@/utils/axios_http-config'
 
@@ -78,7 +71,7 @@ export default {
   name: 'EditProfile',
   components: {
     PersonalOption,
-    BIconHouseDoor,
+    UserHeader,
     BFormGroup,
     BFormInput,
     BFormRadio
@@ -222,29 +215,6 @@ export default {
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: common.baseSize(21) common.baseSize(26);
-  $headerFontSize: common.baseSize(20);
-  .back {
-    color: #464646;
-  }
-  .iconjiantou2 {
-    font-size: $headerFontSize;
-  }
-  h1 {
-    font-size: $headerFontSize;
-    font-weight: 700;
-  }
-
-  .home-icon {
-    font-size: $headerFontSize;
-    color: #ff4f5d;
-    display: block;
-  }
-}
 .avatar {
   display: flex;
   justify-content: center;

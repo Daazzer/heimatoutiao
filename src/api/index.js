@@ -5,6 +5,10 @@ class Api {
     return axios.post('/login', data).then(res => [null, res]).catch(err => [err])
   }
 
+  register (data) {
+    return axios.post('/register', data).then(res => [null, res]).catch(err => [err])
+  }
+
   getUser (id) {
     return axios.get(`/user/${id}`).then(res => [null, res]).catch(err => [err])
   }
