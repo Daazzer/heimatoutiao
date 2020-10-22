@@ -87,6 +87,7 @@ export default {
   width: 100%;
   padding: common.baseSize(15) 0;
   margin-bottom: common.baseSize(24);
+  border: none;
   border-bottom: 2px solid #757575;
   background-color: #f2f2f2;
   font-size: common.baseSize(18);

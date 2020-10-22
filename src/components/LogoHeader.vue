@@ -18,6 +18,10 @@ export default {
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
 
+button {
+  border: none;
+}
+
 .close-btn {
   .iconicon-test {
     font-size: common.baseSize(21);

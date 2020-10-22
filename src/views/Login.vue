@@ -26,7 +26,7 @@
         没有账号？
         <b-link to="/register">去注册</b-link>
       </p>
-      <UserButton @click="login">登录</UserButton>
+      <UserButton @click.prevent="login">登录</UserButton>
     </form>
   </div>
 </template>
@@ -55,7 +55,6 @@ export default {
   },
   methods: {
     async login (e) {
-      e.preventDefault()
       const { username, password } = this.user
       const userName = username.trim()
       const userPassword = password.trim()

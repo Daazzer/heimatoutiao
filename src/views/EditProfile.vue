@@ -1,7 +1,9 @@
 <template>
   <div class="editprofile">
     <header>
-      <span class="iconfont iconjiantou2"></span>
+      <b-link class="back" :to="`/personal/${id}`">
+        <span class="iconfont iconjiantou2"></span>
+      </b-link>
       <h1>编辑用户资料</h1>
       <b-link to="/">
         <BIconHouseDoor class="home-icon" />
@@ -9,7 +11,12 @@
     </header>
     <div class="avatar">
       <b-img rounded="circle" :src="headImg" alt="用户头像" />
-      <b-form-file class="avatar_uploader" plain name="file" />
+      <b-form-file
+        class="avatar_uploader"
+        @change="editHeadImg"
+        plain
+        name="head_img"
+      />
     </div>
     <PersonalOption title="昵称" :desc="nickName" @click="editNickname" />
     <PersonalOption
@@ -20,23 +27,49 @@
     />
     <PersonalOption title="性别" :desc="getGender" @click="editGender" />
     <b-modal
-      centered
-      hide-backdrop
       id="editModal"
-      title="BootstrapVue"
-      modal-class="edit-modal"
+      ref="modal"
+      :title="`编辑${editTitle}`"
+      @show="resetModal"
+      @hidden="resetModal"
+      @ok="handleOk"
       ok-variant="danger"
+      hide-header-close
+      ok-title="确认"
+      cancel-title="取消"
     >
-      <p class="my-2">
-        We've added the utility dasdadsadsdsa <code>'shadow'</code>
-        to the modal content for added effect.
-      </p>
+      <form ref="editForm" @submit.stop.prevent="handleSubmit">
+        <BFormGroup v-if="editTitle === '性别'">
+          <b-container fluid>
+            <b-col offset="2">
+              <BFormRadio v-model="editVal" name="gender" :value="1"
+                >男</BFormRadio
+              >
+              <BFormRadio v-model="editVal" name="gender" :value="0"
+                >女</BFormRadio
+              >
+            </b-col>
+          </b-container>
+        </BFormGroup>
+        <BFormGroup
+          v-else
+          :state="editState"
+          :invalid-feedback="`${editTitle}不能为空`"
+        >
+          <BFormInput
+            id="editInput"
+            v-model="editVal"
+            :state="editState"
+            required
+          ></BFormInput>
+        </BFormGroup>
+      </form>
     </b-modal>
   </div>
 </template>
 
 <script>
-import { BIconHouseDoor } from 'bootstrap-vue'
+import { BIconHouseDoor, BFormGroup, BFormInput, BFormRadio } from 'bootstrap-vue'
 import PersonalOption from '@/components/PersonalOption.vue'
 import axios from '@/utils/axios_http-config'
 
@@ -44,39 +77,129 @@ export default {
   name: 'EditProfile',
   components: {
     PersonalOption,
-    BIconHouseDoor
+    BIconHouseDoor,
+    BFormGroup,
+    BFormInput,
+    BFormRadio
   },
   data () {
     return {
+      id: 0,
       headImg: '',
       gender: 1,
       nickName: '未知用户',
-      passWord: ''
+      passWord: '',
+      editVal: '',
+      editTitle: '',
+      editState: null
     }
   },
   async mounted () {
     const id = this.$route.params.id
     const [err, res] = await this.$api.getUser(id)
+    this.id = id
 
     if (err) {
       this.$alertMsgBox('danger', '获取用户数据失败')
     } else {
       const { password, gender, head_img, nickname } = res.data.data
-      this.headImg = head_img === '' ? axios.defaults.baseURL + '/uploads/image/IMG1568705287936.jpeg' : head_img
+      this.headImg = head_img === '' ? axios.defaults.baseURL + '/uploads/image/IMG1568705287936.jpeg' : axios.defaults.baseURL + head_img
       this.gender = gender
       this.nickName = nickname
       this.passWord = password
     }
   },
   methods: {
-    editNickname (e) {
+    editNickname (e, title) {
       this.$bvModal.show('editModal')
+      this.editTitle = title
+      this.editVal = this.nickName
     },
-    editPassword (e) {
-      console.log('pwd')
+    editPassword (e, title) {
+      this.$bvModal.show('editModal')
+      this.editTitle = title
+      this.editVal = this.passWord
     },
-    editGender (e) {
-      console.log('gender')
+    editGender (e, title) {
+      this.$bvModal.show('editModal')
+      this.editTitle = title
+      this.editVal = this.gender
+    },
+    checkFormValidity () {
+      const valid = this.$refs.editForm.checkValidity()
+      this.editState = valid ? null : valid
+      return valid
+    },
+    resetModal () {
+      this.editVal = ''
+      this.editState = null
+    },
+    async editHeadImg (e) {
+      const fd = new FormData();
+      const uploadFile = e.target.files[0]
+      const imgSrc = URL.createObjectURL(uploadFile)
+
+      this.headImg = imgSrc
+
+      fd.append('file', uploadFile)
+      const [uploadErr, uploadRes] = await this.$api.fileUpload(fd)
+
+      if (uploadErr) {
+        return this.$alertMsgBox('danger', '文件上传错误')
+      } else if (uploadRes.data.statusCode) {
+        return this.$alertMsgBox('danger', uploadRes.data.message)
+      }
+
+      const imgUrl = uploadRes.data.data.url
+
+      const [updateInfoErr, updateInfoRes] = await this.$api.userUpdate(this.id, { head_img: imgUrl })
+
+      if (updateInfoErr) {
+        this.$alertMsgBox('danger', '用户头像修改错误')
+      } else if (updateInfoRes.data.statusCode) {
+        this.$alertMsgBox('danger', '用户头像修改失败')
+      } else {
+        this.$alertMsgBox('success', '用户头像修改成功')
+      }
+    },
+    async handleOk (bvModalEvt) {
+      if (!this.checkFormValidity()) {
+        bvModalEvt.preventDefault()
+        return
+      }
+      let key = ''
+      switch (this.editTitle) {
+        case '昵称':
+          key = 'nickname'
+          break
+        case '密码':
+          key = 'password'
+          break
+        case '性别':
+          key = 'gender'
+          break
+      }
+
+      const [err, res] = await this.$api.userUpdate(this.id, { [key]: this.editVal })
+
+      if (err) {
+        this.$alertMsgBox('danger', '发生错误')
+      } else if (res.data.statusCode) {
+        this.$alertMsgBox('danger', '修改失败，' + res.data.message)
+      } else {
+        switch (this.editTitle) {
+          case '昵称':
+            this.nickName = res.data.data.nickname
+            break
+          case '密码':
+            this.passWord = this.editVal
+            break
+          case '性别':
+            this.gender = res.data.data.gender
+            break
+        }
+        this.$alertMsgBox('success', res.data.message)
+      }
     }
   },
   computed: {
@@ -102,6 +225,9 @@ header {
   align-items: center;
   padding: common.baseSize(21) common.baseSize(26);
   $headerFontSize: common.baseSize(20);
+  .back {
+    color: #464646;
+  }
   .iconjiantou2 {
     font-size: $headerFontSize;
   }

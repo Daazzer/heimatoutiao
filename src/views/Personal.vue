@@ -55,7 +55,7 @@ export default {
       this.$alertMsgBox('danger', '获取用户数据失败')
     } else {
       const { create_date, gender, head_img, nickname } = res.data.data
-      this.headImg = head_img === '' ? axios.defaults.baseURL + '/uploads/image/IMG1569393358174.jpeg' : head_img
+      this.headImg = head_img === '' ? axios.defaults.baseURL + '/uploads/image/IMG1569393358174.jpeg' : axios.defaults.baseURL +  head_img
       this.gender = gender
       this.nickName = nickname
       this.createDate = create_date
