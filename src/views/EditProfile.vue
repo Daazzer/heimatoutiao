@@ -15,6 +15,7 @@
         class="avatar_uploader"
         @change="editHeadImg"
         plain
+        :value="imgFile"
         name="head_img"
       />
     </div>
@@ -91,7 +92,8 @@ export default {
       passWord: '',
       editVal: '',
       editTitle: '',
-      editState: null
+      editState: null,
+      imgFile: null
     }
   },
   async mounted () {
@@ -142,10 +144,11 @@ export default {
       this.headImg = imgSrc
 
       fd.append('file', uploadFile)
+
       const [uploadErr, uploadRes] = await this.$api.fileUpload(fd)
 
       if (uploadErr) {
-        return this.$alertMsgBox('danger', '文件上传错误')
+        return this.$alertMsgBox('danger', '图片上传错误')
       } else if (uploadRes.data.statusCode) {
         return this.$alertMsgBox('danger', uploadRes.data.message)
       }
@@ -155,11 +158,11 @@ export default {
       const [updateInfoErr, updateInfoRes] = await this.$api.userUpdate(this.id, { head_img: imgUrl })
 
       if (updateInfoErr) {
-        this.$alertMsgBox('danger', '用户头像修改错误')
+        this.$alertMsgBox('danger', '头像修改错误')
       } else if (updateInfoRes.data.statusCode) {
-        this.$alertMsgBox('danger', '用户头像修改失败')
+        this.$alertMsgBox('danger', '头像修改失败')
       } else {
-        this.$alertMsgBox('success', '用户头像修改成功')
+        this.$alertMsgBox('success', '头像修改成功')
       }
     },
     async handleOk (bvModalEvt) {

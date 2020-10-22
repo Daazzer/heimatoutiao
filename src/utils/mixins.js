@@ -5,8 +5,8 @@ function alertMsg (variant, message) {
     variant,
     autoHideDelay: 2000,
     toaster: 'b-toaster-top-center',
-    noCloseButton: true,
-    bodyClass: 'alert-text_body'
+    bodyClass: 'alert-text_body',
+    noCloseButton: true
   })
 }
 
