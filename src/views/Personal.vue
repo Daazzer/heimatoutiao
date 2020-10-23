@@ -1,16 +1,16 @@
 <template>
   <div class="personal">
-    <router-link class="personal_link" :to="`/edit_profile/${$route.params.id}`">
+    <router-link class="personal_link" :to="`/edit_profile/${id}`">
       <div class="profile">
-        <img :src="headImg" alt="用户头像" />
+        <img :src="userInfo.headImg" alt="用户头像" />
         <div class="profile_center">
           <h2 class="name">
             <span
               :class="['iconfont', `iconxingbie${getGender}`, 'gender-icon']"
             ></span
-            >{{ nickName }}
+            >{{ userInfo.nickName }}
           </h2>
-          <div class="time">{{ createDate | time }}</div>
+          <div class="time">{{ userInfo.createDate | time }}</div>
         </div>
         <span class="iconfont iconjiantou1 arrow-r"></span>
       </div>
@@ -40,10 +40,13 @@ export default {
   },
   data () {
     return {
-      headImg: '',
-      gender: 1,
-      nickName: '未知用户',
-      createDate: 'xxxx-xx-xx'
+      id: -1,
+      userInfo: {
+        headImg: '',
+        gender: 1,
+        nickName: '未知用户',
+        createDate: 'xxxx-xx-xx'
+      }
     }
   },
   async mounted () {
@@ -52,24 +55,25 @@ export default {
     const [err, res] = await this.$api.getUser(id)
 
     if (err) {
-      this.$alertMsgBox('danger', '获取用户数据失败')
+      this.$toast.fail('获取用户数据失败')
     } else {
       const { create_date, gender, head_img, nickname } = res.data.data
-      this.headImg = head_img === '' ? axios.defaults.baseURL + '/uploads/image/default.jpeg' : axios.defaults.baseURL +  head_img
-      this.gender = gender
-      this.nickName = nickname
-      this.createDate = create_date
+      this.id = id
+      this.userInfo.headImg = head_img === '' ? axios.defaults.baseURL + '/uploads/image/default.jpeg' : axios.defaults.baseURL +  head_img
+      this.userInfo.gender = gender
+      this.userInfo.nickName = nickname
+      this.userInfo.createDate = create_date
     }
   },
   methods: {
     logout () {
-      window.localStorage.removeItem('heimatoutiao_token')
+      localStorage.removeItem('heimatoutiao_userInfo')
       this.$router.push({ name: 'Login' })
     },
   },
   computed: {
     getGender () {
-      const gender = this.gender
+      const gender = this.userInfo.gender
       switch (gender) {
         case 1:
           return 'nan'

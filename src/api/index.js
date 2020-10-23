@@ -1,25 +1,12 @@
-import axios from '@/utils/axios_http-config'
+import user from './_user'
+import fileUpload from './_fileUpload'
+import category from './_category'
+import newsArticle from './_newsArticle'
 
-class Api {
-  login (data) {
-    return axios.post('/login', data).then(res => [null, res]).catch(err => [err])
-  }
 
-  register (data) {
-    return axios.post('/register', data).then(res => [null, res]).catch(err => [err])
-  }
-
-  getUser (id) {
-    return axios.get(`/user/${id}`).then(res => [null, res]).catch(err => [err])
-  }
-
-  userUpdate (id, data) {
-    return axios.post(`/user_update/${id}`, data).then(res => [null, res]).catch(err => [err])
-  }
-
-  fileUpload (file) {
-    return axios.post('/upload/', file).then(res => [null, res]).catch(err => [err])
-  }
+export default {
+  ...user,
+  ...fileUpload,
+  ...category,
+  ...newsArticle
 }
-
-export default new Api()

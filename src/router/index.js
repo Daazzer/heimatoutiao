@@ -6,7 +6,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'index',
+    name: 'Default',
+    component: () => import(/* webpackChunkName: "index" */ '@/views/index.vue')
+  },
+  {
+    path: '/index',
+    name: 'Index',
     component: () => import(/* webpackChunkName: "index" */ '@/views/index.vue')
   },
   {

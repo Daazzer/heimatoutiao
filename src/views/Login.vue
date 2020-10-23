@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <LogoHeader />
+    <LogoHeader to="/" />
     <form class="login-form">
       <UserInput
         placeholder="用户名/手机号码"
@@ -58,13 +58,13 @@ export default {
       const { username, password } = this.user
       const userName = username
       const userPassword = password
-      const token = window.localStorage.getItem('heimatoutiao_token')
+      let userInfo = JSON.parse(localStorage.getItem('heimatoutiao_userInfo'))
 
       if (userName === '' || userPassword === '') {
         return this.$toast.fail('输入框不能为空')
       } else if (!this.validateUsername.test(userName) || !this.validatePassword.test(userPassword)) {
         return this.$toast.fail('用户名或密码错误')
-      } else if (token) {
+      } else if (userInfo) {
         return this.$toast.fail('你已登录，请不要重复登录')
       }
 
@@ -76,8 +76,10 @@ export default {
       } else if (res.data.statusCode) {
         this.$toast.fail('登录失败，' + res.data.message)
       } else {
-        window.localStorage.setItem('heimatoutiao_token', res.data.data.token)
-        const { id } = res.data.data.user
+        // 将 id 存到 localStorage，防止刷新
+        const { user: { id }, token } = res.data.data
+        userInfo = JSON.stringify({ token, id })
+        localStorage.setItem('heimatoutiao_userInfo', userInfo)
         this.$route.params.id = id
         this.$toast.success('登录成功')
         this.$router.push({ path: `/personal/${id}` })

@@ -3,8 +3,10 @@ import axios from 'axios'
 axios.defaults.baseURL = 'http://localhost:3000'
 
 axios.interceptors.request.use(config => {
-  const token = window.localStorage.getItem('heimatoutiao_token')
-  if (token) {
+  const userInfo = JSON.parse(localStorage.getItem('heimatoutiao_userInfo'))
+
+  if (userInfo) {
+    const token= userInfo.token
     config.headers.Authorization = token
   }
   return config

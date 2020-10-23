@@ -1,8 +1,8 @@
 <template>
   <div>
-    <button class="close-btn">
+    <router-link :to="to" class="close-btn">
       <span class="iconfont iconicon-test"></span>
-    </button>
+    </router-link>
     <div class="logo">
       <span class="iconfont iconnew"></span>
     </div>
@@ -11,16 +11,18 @@
 
 <script>
 export default {
-  name: 'LogoHeader'
+  name: 'LogoHeader',
+  props: {
+    to: {
+      required: true
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
 
-button {
-  border: none;
-}
 .close-btn {
   background-color: transparent;
   .iconicon-test {

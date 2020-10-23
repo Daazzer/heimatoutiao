@@ -5,18 +5,14 @@
     </router-link>
     <h1>{{ title }}</h1>
     <router-link to="/">
-      <VanIcon name="wap-home-o" class="home-icon" />
+      <van-icon name="wap-home-o" class="home-icon" />
     </router-link>
   </header>
 </template>
 
 <script>
-import { Icon as VanIcon } from 'vant'
 export default {
   name: 'UserHeader',
-  components: {
-    VanIcon
-  },
   props: {
     title: {
       required: true,

@@ -1,6 +1,6 @@
 <template>
   <div class="editprofile">
-    <UserHeader title="编辑用户资料" :goback="`/personal/${userInfo.id}`" />
+    <UserHeader title="编辑用户资料" :goback="`/personal/${id}`" />
     <div class="avatar">
       <van-image round :src="userInfo.headImg" alt="用户头像" />
       <VanUploader
@@ -86,8 +86,8 @@ export default {
   },
   data () {
     return {
+      id: 0,
       userInfo: {
-        id: 0,
         headImg: '',
         gender: 1,
         nickName: '未知用户',
@@ -103,7 +103,7 @@ export default {
   async mounted () {
     const id = this.$route.params.id
     const [err, res] = await this.$api.getUser(id)
-    this.userInfo.id = id
+    this.id = id
 
     if (err) {
       this.$toast.fail('获取用户数据失败')
@@ -135,7 +135,7 @@ export default {
       if (this.editorVal === '') {
         return
       }
-      const [err, res] = await this.$api.userUpdate(this.userInfo.id, { nickname: this.editorVal })
+      const [err, res] = await this.$api.userUpdate(this.id, { nickname: this.editorVal })
       if (err) {
         this.$toast.fail('发生错误')
       } else if (res.data.statusCode) {
@@ -154,7 +154,7 @@ export default {
         return
       }
 
-      const [err, res] = await this.$api.userUpdate(this.userInfo.id, { password: this.newPassword })
+      const [err, res] = await this.$api.userUpdate(this.id, { password: this.newPassword })
 
       if (err) {
         this.$toast.fail('发生错误')
@@ -167,7 +167,7 @@ export default {
       }
     },
     async editGender () {
-      const [err, res] = await this.$api.userUpdate(this.userInfo.id, { gender: this.editorVal })
+      const [err, res] = await this.$api.userUpdate(this.id, { gender: this.editorVal })
       if (err) {
         this.$toast.fail('发生错误')
       } else if (res.data.statusCode) {

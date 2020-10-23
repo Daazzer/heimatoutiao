@@ -1,8 +1,7 @@
 import Vue from 'vue'
-import { Toast, Image } from 'vant'
+import { Toast, Image, Icon } from 'vant'
 import App from './App.vue'
 import router from './router'
-// import store from './store'
 import mixins from './utils/mixins'
 
 Vue.config.productionTip = false
@@ -10,11 +9,11 @@ Vue.config.productionTip = false
 Vue
   .use(Toast)
   .use(Image)
+  .use(Icon)
 
 Vue.mixin(mixins)
 
 new Vue({
   router,
-  // store,
   render: h => h(App)
 }).$mount('#app')
