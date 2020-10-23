@@ -20,33 +20,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.index {
-  .header {
-    height: 40px;
-    display: flex;
-    justify-content: space-between;
-    background-color: #f00;
-    align-items: center;
-    color: #fff;
-  }
-  .search{
-    flex: 1;
-    height: 30px;
-    background-color: rgba(255,255,255,0.4);
-    border-radius: 15px;
-    text-align: center;
-    line-height: 30px;
-    .van-icon{
-      font-size: 16px;
-    }
-  }
+.header {
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #f00;
+  align-items: center;
+  color: #fff;
+}
+.search{
+  flex: 1;
+  height: 30px;
+  background-color: rgba(255,255,255,0.4);
+  border-radius: 15px;
+  text-align: center;
+  line-height: 30px;
   .van-icon{
-    font-size: 24px;
-    padding: 0 10px;
+    font-size: 16px;
   }
-  .iconfont{
-    font-size: 50px;
-    padding: 0 10px;
-  }
+}
+.van-icon{
+  font-size: 24px;
+  padding: 0 10px;
+}
+.iconfont{
+  font-size: 50px;
+  padding: 0 10px;
 }
 </style>

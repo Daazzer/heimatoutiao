@@ -68,20 +68,20 @@ export default {
       const userNickname = nickname
 
       if (userName === '' || userPassword === '' || userNickname === '') {
-        return this.$alertMsgBox('danger', '输入框不能为空')
+        return this.$toast.fail('输入框不能为空')
       } else if (!this.validateUsername.test(userName) || !this.validatePassword.test(userPassword) || !this.validateNickname.test(userNickname)) {
-        return this.$alertMsgBox('danger', '无效的用户名或密码或昵称')
+        return this.$toast.fail('无效的用户名或密码或昵称')
       }
 
       const [err, res] = await this.$api.register(this.user)
 
       if (err) {
-        this.$alertMsgBox('danger', '注册失败，发生错误')
+        this.$toast.fail('注册失败，发生错误')
       } else if (res.data.statusCode) {
-        this.$alertMsgBox('danger', '注册失败')
+        this.$toast.fail('danger', '注册失败')
         console.log(res)
       } else {
-        this.$alertMsgBox('success', res.data.message)
+        this.$toast.success(res.data.message)
         this.$router.push('/login')
       }
     }
