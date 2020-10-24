@@ -1,4 +1,9 @@
 <template>
+  <!--
+  如果数据中的type为1，说明是文章，2说明是视频
+  当type值为1的时候，如果cover的数量<=2,那么就是左右结构，如果cover的数量>=3，
+  那么就是上下结构
+  -->
   <article
     v-if="news.type === 1 && news.cover.length <= 2"
     class="news-acticle-item sm"
@@ -10,7 +15,7 @@
         <span class="news_comment">{{ news.comment_length }}跟帖</span>
       </p>
     </div>
-    <img :src="news.cover[0].url" alt="新闻图片" />
+    <van-image :src="news.cover[0].url" alt="新闻图片" />
   </article>
   <article
     v-else-if="news.type === 1 && news.cover.length >= 3"
@@ -20,7 +25,8 @@
       <div>
         <h3 class="news_title">{{ news.title }}</h3>
         <div class="news_img-group">
-          <img
+          <van-image
+            class="image"
             v-for="(cover, index) in news.cover"
             :key="index"
             :src="cover.url"
@@ -39,9 +45,9 @@
       <div>
         <h3 class="news_title">{{ news.title }}</h3>
         <div class="playarea">
-          <img :src="news.cover[0].url" alt />
+          <van-image :src="news.cover[0].url" alt="新闻图片" />
           <div class="playicon">
-            <VanIcon name="play" />
+            <van-icon name="play" />
           </div>
         </div>
       </div>
@@ -54,14 +60,9 @@
 </template>
 
 <script>
-import { Icon as VanIcon } from 'vant'
-
 export default {
   name: 'NewsArticleItem',
-  props: ['news'],
-  components: {
-    VanIcon
-  }
+  props: ['news']
 }
 </script>
 
@@ -79,7 +80,7 @@ export default {
 
     &_info {
       color: #868686;
-      font-size: common.baseSize(16);
+      font-size: common.baseSize(14);
       margin-top: common.baseSize(10);
     }
 
@@ -100,17 +101,14 @@ export default {
       }
 
     }
-    img {
+    ::v-deep .van-image__img {
       width: common.baseSize(120);
       height: common.baseSize(75);
     }
   }
 
   &.md {
-    min-height: common.baseSize(170);
-
     .news {
-      height: 100%;
       &_title {
         margin-bottom: common.baseSize(5);
       }
@@ -119,7 +117,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        img {
+        ::v-deep .van-image {
           width: calc((100% - 4px) / 3);
           height: common.baseSize(74);
         }
@@ -137,7 +135,7 @@ export default {
 
       .playarea {
         position: relative;
-        img {
+        ::v-deep .van-image {
           width: 100%;
         }
         .playicon {
@@ -154,7 +152,7 @@ export default {
           border-radius: 50%;
           font-size: common.baseSize(25);
           color: #fff;
-          background-color: rgba(104, 104, 104, 0.4);
+          background-color: rgba(61, 61, 61, 0.4);
         }
       }
     }
