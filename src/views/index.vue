@@ -65,37 +65,23 @@ export default {
   },
   data () {
     return {
-      id: -1,
+      id: JSON.parse(localStorage.getItem('heimatoutiao_userInfo')) ? JSON.parse(localStorage.getItem('heimatoutiao_userInfo')).id : -1,
       tabNav: {
         active: JSON.parse(localStorage.getItem('heimatoutiao_userInfo')) ? 1 : 0,
         categoryItems: []
       }
-      // tabList: {
-      //   pageIndex: 1,
-      //   pageSize: 4,
-      //   refreshing: false,
-      //   loading: false,
-      //   finished: false,
-      //   loadError: false
-      // }
     }
   },
   async mounted () {
-    const userInfo = JSON.parse(localStorage.getItem('heimatoutiao_userInfo'))
-
-    if (userInfo) {
-      this.id = userInfo.id
-    }
-
     const [categoryErr, categoryRes] = await this.$api.category()
 
     if (categoryErr) {
       return this.$toast.fail('获取栏目数据失败，发生错误')
     }
 
-    // console.log(categoryRes.data.data)
     // 初始化数据结构，页面优化方式
     this.tabNav.categoryItems = categoryRes.data.data.map(v => ({
+      // 拿到每条，新闻文章数据项的属性
       ...v,
       newsArticleItems: [],
       pageIndex: 1,
@@ -143,9 +129,7 @@ export default {
 
       if (postRes.data.data.length < categoryItem.pageSize) {
         // 返回数据条数小于当前设定的分页大小，说明是最后一条
-        categoryItem.loading = false
         categoryItem.finished = true
-        return
       }
 
       if (refresh) {
@@ -153,6 +137,7 @@ export default {
       } else {
         categoryItem.newsArticleItems.push(...postRes.data.data)
       }
+
       categoryItem.loading = false
     }
   },
@@ -161,7 +146,7 @@ export default {
       const categoryItem = this.tabNav.categoryItems[this.tabNav.active]
 
       // 如果当前栏目没有新闻数据，则切换时才加载
-      if (categoryItem.newsArticleItems.length === 0) {
+      if (categoryItem.newsArticleItems.length === 0 && !categoryItem.finished) {
         this.loadNewsArticle()
       }
     }

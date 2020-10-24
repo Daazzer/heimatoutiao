@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Toast, Image, Icon } from 'vant'
+import { Toast, Image, Icon, Button } from 'vant'
 import App from './App.vue'
 import router from './router'
 import mixins from './utils/mixins'
@@ -10,6 +10,7 @@ Vue
   .use(Toast)
   .use(Image)
   .use(Icon)
+  .use(Button)
 
 Vue.mixin(mixins)
 

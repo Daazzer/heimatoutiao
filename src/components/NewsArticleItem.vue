@@ -6,22 +6,24 @@
   -->
   <article
     v-if="news.type === 1 && news.cover.length <= 2"
-    class="news-acticle-item sm"
+    class="news-article-item sm"
   >
-    <div class="news">
-      <h3 class="news_title">{{ news.title }}</h3>
-      <p class="news_info">
-        <span class="news_publisher">{{ news.user.nickname }}</span>
-        <span class="news_comment">{{ news.comment_length }}跟帖</span>
-      </p>
-    </div>
-    <van-image :src="news.cover[0].url" alt="新闻图片" />
+    <router-link :to="articleDetailLink" class="news-article_link">
+      <div class="news">
+        <h3 class="news_title">{{ news.title }}</h3>
+        <p class="news_info">
+          <span class="news_publisher">{{ news.user.nickname }}</span>
+          <span class="news_comment">{{ news.comment_length }}跟帖</span>
+        </p>
+      </div>
+      <van-image :src="news.cover[0].url" alt="新闻图片" />
+    </router-link>
   </article>
   <article
     v-else-if="news.type === 1 && news.cover.length >= 3"
-    class="news-acticle-item md"
+    class="news-article-item md"
   >
-    <div class="news">
+    <router-link :to="articleDetailLink" class="news">
       <div>
         <h3 class="news_title">{{ news.title }}</h3>
         <div class="news_img-group">
@@ -38,14 +40,14 @@
         <span class="news_publisher">{{ news.user.nickname }}</span>
         <span class="news_comment">{{ news.comment_length }}跟帖</span>
       </p>
-    </div>
+    </router-link>
   </article>
-  <article v-else-if="news.type === 2" class="news-acticle-item lg">
-    <div class="news">
+  <article v-else-if="news.type === 2" class="news-article-item lg">
+    <router-link :to="articleDetailLink" class="news">
       <div>
         <h3 class="news_title">{{ news.title }}</h3>
         <div class="playarea">
-          <van-image :src="news.cover[0].url" alt="新闻图片" />
+          <video :poster="news.cover[0].url" />
           <div class="playicon">
             <van-icon name="play" />
           </div>
@@ -55,21 +57,26 @@
         <span class="news_publisher">{{ news.user.nickname }}</span>
         <span class="news_comment">{{ news.comment_length }}跟帖</span>
       </p>
-    </div>
+    </router-link>
   </article>
 </template>
 
 <script>
 export default {
   name: 'NewsArticleItem',
-  props: ['news']
+  props: ['news'],
+  computed: {
+    articleDetailLink () {
+      return '/articleDetail/' + this.news.id
+    }
+  }
 }
 </script>
 
 <style lang='scss' scoped>
 @use "@/styles/common.scss";
 
-.news-acticle-item {
+.news-article-item {
   padding: common.baseSize(14) common.baseSize(10);
   border-bottom: 1px solid #e4e4e4;
 
@@ -77,6 +84,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    color: #333;
 
     &_info {
       color: #868686;
@@ -89,10 +97,10 @@ export default {
     }
   }
 
-  &.sm {
+  &.sm .news-article_link {
+    min-height: common.baseSize(104);
     display: flex;
     justify-content: space-between;
-    min-height: common.baseSize(104);
 
     .news {
       margin-right: common.baseSize(10);
@@ -135,7 +143,7 @@ export default {
 
       .playarea {
         position: relative;
-        ::v-deep .van-image {
+        video {
           width: 100%;
         }
         .playicon {
