@@ -28,11 +28,14 @@
               v-model="loading"
               :finished="finished"
               finished-text="没有更多了"
+              :error.sync="loadError"
+              error-text="请求失败，点击重新加载"
               @load="loadNewsArticle"
             >
-              <VanCell
-                v-for="newsArticleItem in newsArticleItems" :key="newsArticleItem.id"
-                :title="newsArticleItem.title"
+              <NewsArticleItem
+                v-for="newsArticleItem in newsArticleItems"
+                :key="newsArticleItem.id"
+                :news="newsArticleItem"
               />
             </VanList>
           </VanPullRefresh>
@@ -47,9 +50,9 @@ import {
   Tab as VanTab,
   Tabs as VanTabs,
   List as VanList,
-  Cell as VanCell,
   PullRefresh as VanPullRefresh
 } from 'vant'
+import NewsArticleItem from '@/components/NewsArticleItem.vue'
 
 export default {
   name: 'index',
@@ -57,21 +60,22 @@ export default {
     VanTab,
     VanTabs,
     VanList,
-    VanCell,
-    VanPullRefresh
+    VanPullRefresh,
+    NewsArticleItem
   },
   data () {
     return {
       id: -1,
       active: 0,
       categoryItems: [],
-      curPageIndex: 1,
-      pageSize: 10,
       newsArticleItems: [],
+      curPageIndex: 1,
+      pageSize: 4,
       refreshing: false,
       loading: false,
       finished: false,
-      total: 10
+      loadError: false,
+      total: NaN
     }
   },
   async mounted () {
@@ -112,9 +116,7 @@ export default {
       const [postErr, postRes] = await this.$api.post({ category: categoryId, pageSize: this.pageSize, pageIndex: this.curPageIndex })
 
       if (postErr) {
-        this.$toast.fail('获取新闻数据失败，发生错误')
-        this.finished = true
-      // 如果页面文章数等于后台的总文章数
+        this.loadError = true
       } else {
         this.newsArticleItems.push(...postRes.data.data)
       }
@@ -128,12 +130,16 @@ export default {
       const [postErr, postRes] = await this.$api.post({ category: categoryId, pageSize: this.pageSize, pageIndex: 1 })
 
       if (postErr) {
-        this.$toast.fail('获取新闻数据失败，发生错误')
+        this.loadError = true
       } else {
+        /*
+        如果数据中的type为1，说明是文章，2说明是视频
+        当type值为1的时候，如果cover的数量<=2,那么就是左右结构，如果cover的数量>=3，
+        那么就是上下结构
+         */
         this.total = postRes.data.total
         // 重新初始化新闻文章列表
         this.newsArticleItems = postRes.data.data
-        console.log(this.newsArticleItems)
       }
     }
   }
@@ -175,6 +181,15 @@ export default {
       margin: 0 common.baseSize(10);
       font-size: common.baseSize(24);
     }
+  }
+}
+
+.index_nav  {
+  ::v-deep .van-tab__text {
+    font-size: common.baseSize(16);
+  }
+  ::v-deep .van-tabs__wrap {
+    height: common.baseSize(44);
   }
 }
 </style>
