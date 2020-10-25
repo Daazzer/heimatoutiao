@@ -13,7 +13,10 @@ const getNewsArticle = (params = null) => axios.get('/post', { params }).then(re
 
 const getArticleDetialById = id => axios.get(`/post/${id}`).then(res => [null, res]).catch(err => [err])
 
+const likeArticle = id => axios.get(`/post_like/${id}`).then(res => [null, res]).catch(err => [err])
+
 export default {
   getNewsArticle,
-  getArticleDetialById
+  getArticleDetialById,
+  likeArticle
 }

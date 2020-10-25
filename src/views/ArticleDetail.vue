@@ -6,7 +6,13 @@
         <span class="icon-logo iconfont iconnew new"></span>
       </template>
       <template #right>
-        <van-button class="header_btn" round color="#f00" size="mini">关注</van-button>
+        <van-button
+          class="header_btn"
+          round
+          color="#f00"
+          size="mini"
+          @click="followThisUser"
+        >{{ article.has_follow ? '取消关注' : '关注' }}</van-button>
       </template>
     </VanNavBar>
     <main class="detail">
@@ -17,8 +23,11 @@
       </div>
       <div class="content" v-html="article.content" />
       <div class="opt">
-        <van-button round size="mini" class="like">
-          <van-icon name="good-job-o" class="opt_icon" /><span class="like_num">122</span>
+        <van-button round size="mini" class="like" @click="likeThisArticle">
+          <van-icon
+            :name="`good-job${ article.has_like ? '' : '-o'}`"
+            :class="{ active: article.has_like, opt_icon: true }"
+          /><span class="like_num">{{ article.like_length }}</span>
         </van-button>
         <van-button round size="mini" class="chat">
           <van-icon name="chat" class="opt_icon weixin" />微信
@@ -100,7 +109,10 @@ export default {
         user: {
           nickname: '作者',
           create_date: 'xxxx-xx-xx'
-        }
+        },
+        has_follow: false,
+        has_like: true,
+        like_length: 0
       }
     }
   },
@@ -115,6 +127,47 @@ export default {
     }
 
     this.article = res.data.data
+  },
+  methods: {
+    async followThisUser () {
+      const hasfollow = this.article.has_follow
+      const id = this.article.user.id
+      let err, res
+
+      // 如果关注了则点击就是取关
+      if (hasfollow) {
+        [err, res] = await this.$api.unfollowUser(id)
+      } else {
+        [err, res] = await this.$api.followUser(id)
+      }
+
+      if (err) {
+        return this.$toast.fail('关注失败，出现错误')
+      } else if (res.data.statusCode) {
+        return this.$toast.fail('关注失败，请先登录')
+      }
+
+      this.$toast.success(res.data.message)
+
+      this.article.has_follow = !hasfollow
+    },
+    async likeThisArticle () {
+      const [err, res] = await this.$api.likeArticle(this.article.id)
+      if (err) {
+        return this.$toast.fail('点赞失败，发生错误')
+      } else if (res.data.statusCode) {
+        return this.$toast.fail(res.data.message)
+      }
+
+      if (res.data.message === '点赞成功') {
+        this.article.like_length++
+      } else {
+        this.article.like_length--
+      }
+
+      this.article.has_like = !this.article.has_like
+      this.$toast.success(res.data.message)
+    }
   },
   filters: {
     dateFormat
@@ -198,6 +251,9 @@ export default {
   &_icon {
     font-size: common.baseSize(18);
     margin-right: common.baseSize(8);
+    .like &.active {
+      color: #f00;
+    }
   }
   .weixin {
     color: #04c904;
