@@ -9,8 +9,11 @@ import axios from '@/utils/axios_http-config'
  * @param {number} [params.pageSize] 每页显示的条目
  * @returns {Promise<Response>}
  */
-const post = (params = null) => axios.get('/post', { params }).then(res => [null, res]).catch(err => [err])
+const getNewsArticle = (params = null) => axios.get('/post', { params }).then(res => [null, res]).catch(err => [err])
+
+const getArticleDetialById = id => axios.get(`/post/${id}`).then(res => [null, res]).catch(err => [err])
 
 export default {
-  post
+  getNewsArticle,
+  getArticleDetialById
 }

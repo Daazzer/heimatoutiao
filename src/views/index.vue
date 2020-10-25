@@ -117,7 +117,7 @@ export default {
         categoryItem.pageIndex++
       }
 
-      const [postErr, postRes] = await this.$api.post({
+      const [postErr, postRes] = await this.$api.getNewsArticle({
         category: categoryItem.id,
         pageSize: categoryItem.pageSize,
         pageIndex: categoryItem.pageIndex

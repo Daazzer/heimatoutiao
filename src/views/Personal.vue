@@ -10,7 +10,7 @@
             ></span
             >{{ userInfo.nickName }}
           </h2>
-          <div class="time">{{ userInfo.createDate | time }}</div>
+          <div class="time">{{ userInfo.createDate | dateFormat }}</div>
         </div>
         <span class="iconfont iconjiantou1 arrow-r"></span>
       </div>
@@ -31,6 +31,7 @@
 import PersonalOption from '@/components/PersonalOption.vue'
 import UserButton from '@/components/UserButton.vue'
 import axios from '@/utils/axios_http-config'
+import { dateFormat } from '@/utils/filters'
 
 export default {
   name: 'Personal',
@@ -83,22 +84,7 @@ export default {
     }
   },
   filters: {
-    time (createDate) {
-      const date = new Date(createDate)
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1
-      const day = date.getDay()
-
-      const dateArr = [year, month, day]
-
-      const notDate = dateArr.some(v => isNaN(v))
-
-      if (notDate) {
-        return createDate
-      } else {
-        return dateArr.join('-')
-      }
-    }
+    dateFormat
   }
 }
 </script>
