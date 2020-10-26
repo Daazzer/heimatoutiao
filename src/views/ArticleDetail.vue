@@ -21,7 +21,15 @@
         <span class="publisher">{{ article.user.nickname }}</span>
         <span class="date">{{ article.user.create_date | dateFormat }}</span>
       </div>
-      <div class="content" v-html="article.content" />
+      <div class="content">
+        <article v-if="article.type === 1" v-html="article.content" />
+        <video
+          :poster="article.cover[0].url"
+          :src="article.content"
+          v-if="article.type === 2"
+          controls
+        ></video>
+      </div>
       <div class="opt">
         <van-button round size="mini" class="like" @click="likeThisArticle">
           <van-icon
@@ -83,8 +91,13 @@
     <div class="leave-message">
       <input type="text" placeholder="写跟帖">
       <div class="btn-group">
-        <button class="iconfont iconpinglun"></button>
-        <button class="iconfont iconshoucang"></button>
+        <button>
+          <van-icon class="iconfont iconpinglun" badge="99+" />
+        </button>
+        <button
+          :class="['iconfont', 'iconshoucang', article.has_star ? 'active' : '']"
+          @click="starArticle"
+        ></button>
         <button class="iconfont iconfenxiang"></button>
       </div>
     </div>
@@ -92,13 +105,14 @@
 </template>
 
 <script>
-import { NavBar as VanNavBar } from 'vant'
+import { NavBar as VanNavBar, Tag as VanTag } from 'vant'
 import { dateFormat } from '@/utils/filters'
 
 export default {
   name: 'ArticleDetail',
   components: {
-    VanNavBar
+    VanNavBar,
+    VanTag
   },
   data () {
     return {
@@ -110,8 +124,13 @@ export default {
           nickname: '作者',
           create_date: 'xxxx-xx-xx'
         },
+        cover: [
+          { url: '' }
+        ],
         has_follow: false,
-        has_like: true,
+        has_like: false,
+        has_star: false,
+        type: 1,
         like_length: 0
       }
     }
@@ -154,7 +173,7 @@ export default {
     async likeThisArticle () {
       const [err, res] = await this.$api.likeArticle(this.article.id)
       if (err) {
-        return this.$toast.fail('点赞失败，发生错误')
+        return this.$toast.fail(`${this.article.has_like ? '' : '取消'}点赞失败，发生错误`)
       } else if (res.data.statusCode) {
         return this.$toast.fail(res.data.message)
       }
@@ -167,6 +186,17 @@ export default {
 
       this.article.has_like = !this.article.has_like
       this.$toast.success(res.data.message)
+    },
+    async starArticle() {
+      const [err, res] = await this.$api.starArticle(this.article.id)
+
+      if (err) {
+        return this.$toast.fail(`${this.article.has_star ? '' : '取消'}收藏失败，发生错误`)
+      }
+
+      this.$toast.success(res.data.message)
+
+      this.article.has_star = !this.article.has_star
     }
   },
   filters: {
@@ -230,6 +260,9 @@ export default {
       margin: .5em 0 .8em;
     }
   }
+}
+video {
+  width: 100%;
 }
 .opt {
   display: flex;
@@ -371,6 +404,17 @@ export default {
       margin-left: common.baseSize(18);
       font-size: common.baseSize(20);
       color: #7c7c7c;
+      .van-icon {
+        @extend button;
+      }
+      .van-info {
+        font-size: common.baseSize(12);
+        min-width: common.baseSize(14);
+        padding: 0 common.baseSize(3);
+      }
+      &.active {
+        color: #f00;
+      }
     }
   }
 }

@@ -15,8 +15,11 @@ const getArticleDetialById = id => axios.get(`/post/${id}`).then(res => [null, r
 
 const likeArticle = id => axios.get(`/post_like/${id}`).then(res => [null, res]).catch(err => [err])
 
+const starArticle = id => axios.get(`/post_star/${id}`).then(res => [null, res]).catch(err => [err])
+
 export default {
   getNewsArticle,
   getArticleDetialById,
-  likeArticle
+  likeArticle,
+  starArticle
 }

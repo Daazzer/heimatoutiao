@@ -40,6 +40,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue')
   },
   {
+    path: '/myFollows',
+    name: 'MyFollows',
+    component: () => import(/* webpackChunkName: "myFollows" */ '@/views/MyFollows.vue')
+  },
+  {
     path: '*',
     name: 'NotFound',
     component: () => import(/* webpackChunkName: "notfound" */ '@/views/NotFound.vue')

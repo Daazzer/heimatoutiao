@@ -47,7 +47,7 @@
       <div>
         <h3 class="news_title">{{ news.title }}</h3>
         <div class="playarea">
-          <video :poster="news.cover[0].url" />
+          <van-image :src="news.cover[0].url" alt="视频封面" />
           <div class="playicon">
             <van-icon name="play" />
           </div>
@@ -143,7 +143,7 @@ export default {
 
       .playarea {
         position: relative;
-        video {
+        ::v-deep .van-image {
           width: 100%;
         }
         .playicon {

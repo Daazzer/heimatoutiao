@@ -37,7 +37,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../node_modules/vant/lib/index.css";
+// @import "../node_modules/vant/lib/index.css";
 @import "./styles/reset.css";
 @import "./fonts/iconfont.css";
 @import "./styles/common.scss";

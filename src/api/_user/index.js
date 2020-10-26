@@ -12,11 +12,14 @@ const followUser = id => axios.get(`/user_follows/${id}`).then(res => [null, res
 
 const unfollowUser = id => axios.get(`/user_unfollow/${id}`).then(res => [null, res]).catch(err => [err])
 
+const getUserFollows = () => axios.get('/user_follows/').then(res => [null, res]).catch(err => [err])
+
 export default {
   login,
   register,
   getUser,
   userUpdate,
   followUser,
-  unfollowUser
+  unfollowUser,
+  getUserFollows
 }

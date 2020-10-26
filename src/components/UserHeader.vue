@@ -1,8 +1,8 @@
 <template>
   <header>
-    <router-link class="back" :to="goback">
+    <button class="back" @click="$router.back()">
       <span class="iconfont iconjiantou2"></span>
-    </router-link>
+    </button>
     <h1>{{ title }}</h1>
     <router-link to="/">
       <van-icon name="wap-home-o" class="home-icon" />
@@ -17,9 +17,6 @@ export default {
     title: {
       required: true,
       type: String
-    },
-    goback: {
-      required: true,
     }
   }
 }
@@ -36,6 +33,7 @@ header {
   $headerFontSize: common.baseSize(20);
   .back {
     color: #464646;
+    border: none;
   }
   .iconjiantou2 {
     font-size: $headerFontSize;

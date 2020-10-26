@@ -1,6 +1,6 @@
 <template>
   <div class="editprofile">
-    <UserHeader title="编辑用户资料" :goback="`/personal/${id}`" />
+    <UserHeader title="编辑用户资料" />
     <div class="avatar">
       <van-image round :src="userInfo.headImg" alt="用户头像" />
       <VanUploader
