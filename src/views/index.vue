@@ -24,7 +24,7 @@
             success-text="刷新成功"
             @refresh="refreshNewsArticle"
           >
-            <VanList
+            <van-list
               v-model="tabNav.categoryItems[tabNav.active].loading"
               :finished="tabNav.categoryItems[tabNav.active].finished"
               :error.sync="tabNav.categoryItems[tabNav.active].loadError"
@@ -37,7 +37,7 @@
                 :key="newsArticleItem.id"
                 :news="newsArticleItem"
               />
-            </VanList>
+            </van-list>
           </VanPullRefresh>
         </VanTab>
       </VanTabs>
@@ -49,7 +49,6 @@
 import {
   Tab as VanTab,
   Tabs as VanTabs,
-  List as VanList,
   PullRefresh as VanPullRefresh
 } from 'vant'
 import NewsArticleItem from '@/components/NewsArticleItem.vue'
@@ -59,7 +58,6 @@ export default {
   components: {
     VanTab,
     VanTabs,
-    VanList,
     VanPullRefresh,
     NewsArticleItem
   },

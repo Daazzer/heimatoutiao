@@ -1,8 +1,8 @@
 <template>
   <div class="artical-detail">
-    <VanNavBar class="header" left-arrow>
+    <VanNavBar class="header" @click-left="$router.back()" left-arrow>
       <template #left>
-        <van-icon class="icon-back" name="arrow-left back" @click="$router.back()" />
+        <van-icon class="icon-back" name="arrow-left back" />
         <span class="icon-logo iconfont iconnew new"></span>
       </template>
       <template #right>

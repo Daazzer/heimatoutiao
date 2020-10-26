@@ -16,9 +16,9 @@
       </div>
     </router-link>
     <div class="personal_option-group">
-      <PersonalOption title="我的关注" desc="关注的用户" />
+      <PersonalOption title="我的关注" desc="关注的用户" @click="$router.push('/myFollows')" />
       <PersonalOption title="我的跟帖" desc="跟帖/回复" />
-      <PersonalOption title="我的收藏" desc="文章/视频" />
+      <PersonalOption title="我的收藏" desc="文章/视频" @click="$router.push('/myStars')" />
       <PersonalOption title="设置" />
     </div>
     <div class="personal_btn-wrapper">
