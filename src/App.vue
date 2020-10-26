@@ -16,7 +16,6 @@ export default {
       switch (toRouteName) {
         case 'Personal':
           if (!userInfo) {
-            this.$toast.fail('请先登录')
             next({ name: 'Login' })
             return
           }

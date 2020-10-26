@@ -1,5 +1,5 @@
 <template>
-  <div class="artical-detail">
+  <div class="artical-detail" @click="handleClick">
     <VanNavBar class="header" @click-left="$router.back()" left-arrow>
       <template #left>
         <van-icon class="icon-back" name="arrow-left back" />
@@ -7,12 +7,11 @@
       </template>
       <template #right>
         <van-button
-          class="header_btn"
+          :class="{ header_btn: true, active: article.has_follow }"
           round
-          color="#f00"
           size="mini"
           @click="followThisUser"
-        >{{ article.has_follow ? '取消关注' : '关注' }}</van-button>
+        >{{ article.has_follow ? '已关注' : '关注' }}</van-button>
       </template>
     </VanNavBar>
     <main class="detail">
@@ -43,7 +42,7 @@
       </div>
     </main>
     <!-- 精彩跟帖 -->
-    <div class="keeps">
+    <div :class="{ keeps: true, inputting: isFocus }">
       <h2>精彩跟帖</h2>
       <div v-if="article.comment_length > 0" class="comment">
         <div class="comment_wrapper">
@@ -88,17 +87,27 @@
         <p>暂无跟帖，抢占沙发</p>
       </div>
     </div>
-    <div class="leave-message">
-      <input type="text" placeholder="写跟帖">
-      <div class="btn-group">
-        <button>
-          <van-icon class="iconfont iconpinglun" badge="99+" />
-        </button>
-        <button
-          :class="['iconfont', 'iconshoucang', article.has_star ? 'active' : '']"
-          @click="starArticle"
-        ></button>
-        <button class="iconfont iconfenxiang"></button>
+    <div class="leave-comment" id="leaveComment">
+      <div v-show="isFocus === false" class="leave-comment_wrapper">
+        <input type="text" placeholder="写跟帖" @focus="handleFocus">
+        <div class="btn-group">
+          <button>
+            <van-icon class="iconfont iconpinglun" badge="99+" />
+          </button>
+          <button
+            :class="['iconfont', 'iconshoucang', article.has_star ? 'active' : '']"
+            @click="starArticle"
+          ></button>
+          <button class="iconfont iconfenxiang"></button>
+        </div>
+      </div>
+      <div v-show="isFocus === true" class="leave-comment_wrapper input">
+        <textarea
+          ref="leaveCommentInput"
+          cols="5"
+          placeholder="写跟帖"
+        ></textarea>
+        <van-button class="btn-send" type="danger" round size="mini">发送</van-button>
       </div>
     </div>
   </div>
@@ -132,7 +141,8 @@ export default {
         has_star: false,
         type: 1,
         like_length: 0
-      }
+      },
+      isFocus: false
     }
   },
   async mounted () {
@@ -163,7 +173,7 @@ export default {
       if (err) {
         return this.$toast.fail('关注失败，出现错误')
       } else if (res.data.statusCode) {
-        return this.$toast.fail('关注失败，请先登录')
+        return
       }
 
       this.$toast.success(res.data.message)
@@ -175,7 +185,7 @@ export default {
       if (err) {
         return this.$toast.fail(`${this.article.has_like ? '' : '取消'}点赞失败，发生错误`)
       } else if (res.data.statusCode) {
-        return this.$toast.fail(res.data.message)
+        return
       }
 
       if (res.data.message === '点赞成功') {
@@ -192,11 +202,48 @@ export default {
 
       if (err) {
         return this.$toast.fail(`${this.article.has_star ? '' : '取消'}收藏失败，发生错误`)
+      } else if (res.data.statusCode) {
+        return
       }
 
       this.$toast.success(res.data.message)
 
       this.article.has_star = !this.article.has_star
+    },
+    handleFocus () {
+      this.isFocus = true
+      this.$refs.leaveCommentInput.focus()
+    },
+    /**
+     * 判断当前元素是否为给定元素的后代
+     * @param {el} 开始往上查找的元素
+     * @param {selector} 祖先元素选择器
+     * @returns {boolean}
+     */
+    isAncestorElementOf (el, selector) {
+      const ancestor = document.querySelector(selector)
+
+      if (el === ancestor) {
+        return true
+      }
+
+      let parentElement = el.parentElement
+
+      while (parentElement !== ancestor && parentElement !== document.body) {
+        let o = parentElement
+        parentElement = o.parentElement
+      }
+
+      if (parentElement === document.body) {
+        return false
+      }
+
+      return true
+    },
+    handleClick (e) {
+      if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
+        this.isFocus = false
+      }
     }
   },
   filters: {
@@ -222,9 +269,15 @@ export default {
   }
 
   &_btn {
-    width: common.baseSize(62);
-    height: common.baseSize(26);
+    padding: common.baseSize(5) common.baseSize(10);
     font-size: common.baseSize(12);
+    background-color: #f00;
+    color: #fff;
+
+    &.active {
+      background-color: #c7c7c7;
+      color: #363636;
+    }
   }
 }
 
@@ -295,6 +348,10 @@ video {
 .keeps {
   border-top: 5px solid #e4e4e4;
   padding: common.baseSize(25) 0 common.baseSize(52);
+
+  &.inputting {
+    padding: common.baseSize(25) 0 common.baseSize(120);
+  }
   h2 {
     line-height: common.baseSize(50);
     font-size: common.baseSize(20);
@@ -371,50 +428,72 @@ video {
   }
 }
 
-.leave-message {
+.leave-comment {
   position: fixed;
   bottom: 0;
   left: 0;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  align-items: center;
   width: 100%;
-  height: common.baseSize(50);
+  min-height: common.baseSize(50);
   padding: common.baseSize(9) common.baseSize(16);
   background-color: #f2f2f2;
 
-  input, button {
-    border: none;
-  }
-
-  input {
-    $height: common.baseSize(30);
-    padding: common.baseSize(8) common.baseSize(20);
-    height: $height;
-    border-radius: $height / 2;
-    font-size: common.baseSize(14);
-    color: #333;
-    background-color: #d7d7d7;
-  }
-  .btn-group {
+  &_wrapper {
     display: flex;
-    button {
-      padding: 0;
-      margin-left: common.baseSize(18);
-      font-size: common.baseSize(20);
-      color: #7c7c7c;
-      .van-icon {
-        @extend button;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+    &.input {
+      align-items: flex-end;
+    }
+
+    input, button, textarea {
+      border: none;
+    }
+
+    %commentInput {
+      padding: common.baseSize(8) common.baseSize(20);
+      font-size: common.baseSize(14);
+      color: #333;
+      background-color: #d7d7d7;
+    }
+
+    textarea {
+      @extend %commentInput;
+      width: common.baseSize(260);
+      height: common.baseSize(90);
+      border-radius: common.baseSize(15);
+      resize: none;
+    }
+
+    input {
+      @extend %commentInput;
+      $height: common.baseSize(30);
+      height: $height;
+      border-radius: $height / 2;
+    }
+    .btn-group {
+      display: flex;
+      button {
+        padding: 0;
+        margin-left: common.baseSize(18);
+        font-size: common.baseSize(20);
+        color: #7c7c7c;
+        .van-icon {
+          @extend button;
+        }
+        .van-info {
+          font-size: common.baseSize(12);
+          min-width: common.baseSize(14);
+          padding: 0 common.baseSize(3);
+        }
+        &.active {
+          color: #f00;
+        }
       }
-      .van-info {
-        font-size: common.baseSize(12);
-        min-width: common.baseSize(14);
-        padding: 0 common.baseSize(3);
-      }
-      &.active {
-        color: #f00;
-      }
+    }
+    .btn-send {
+      padding: common.baseSize(8) common.baseSize(15);
+      font-size: common.baseSize(12);
     }
   }
 }

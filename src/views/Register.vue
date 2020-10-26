@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <LogoHeader to="/login" />
+    <LogoHeader />
     <form class="register-form">
       <UserInput
         placeholder="用户名/手机号"

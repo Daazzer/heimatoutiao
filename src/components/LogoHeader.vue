@@ -1,8 +1,8 @@
 <template>
   <div>
-    <router-link :to="to" class="close-btn">
+    <button @click="$router.back()" class="close-btn">
       <span class="iconfont iconicon-test"></span>
-    </router-link>
+    </button>
     <div class="logo">
       <span class="iconfont iconnew"></span>
     </div>
@@ -11,12 +11,7 @@
 
 <script>
 export default {
-  name: 'LogoHeader',
-  props: {
-    to: {
-      required: true
-    }
-  }
+  name: 'LogoHeader'
 }
 </script>
 
@@ -25,6 +20,7 @@ export default {
 
 .close-btn {
   background-color: transparent;
+  border: none;
   .iconicon-test {
     font-size: common.baseSize(21);
     font-weight: 700;

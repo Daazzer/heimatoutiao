@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <LogoHeader to="/" />
+    <LogoHeader />
     <form class="login-form">
       <UserInput
         placeholder="用户名/手机号码"
@@ -50,14 +50,17 @@ export default {
         password: ''
       },
       validateUsername: /(?:^\w{4,5}$|^1[35789]\d{9}$)/,
-      validatePassword: /^\w{3,16}$/
+      validatePassword: /^\w{3,16}$/,
+      fromRouteName: null
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    // 通过 `vm` 访问组件实例
+    next(vm => vm.fromRouteName = from.name)
   },
   methods: {
     async login () {
-      const { username, password } = this.user
-      const userName = username
-      const userPassword = password
+      const { username: userName, password: userPassword } = this.user
       let userInfo = JSON.parse(localStorage.getItem('heimatoutiao_userInfo'))
 
       if (userName === '' || userPassword === '') {
@@ -72,16 +75,19 @@ export default {
       const [err, res] = await this.$api.login(this.user)
 
       if (err) {
-        this.$toast.fail('登录失败，发生错误')
+        return this.$toast.fail('登录失败，发生错误')
       } else if (res.data.statusCode) {
-        this.$toast.fail('登录失败，' + res.data.message)
+        return this.$toast.fail('登录失败，' + res.data.message)
+      }
+      // 将 id 存到 localStorage，防止刷新
+      const { user: { id }, token } = res.data.data
+      userInfo = JSON.stringify({ token, id })
+      localStorage.setItem('heimatoutiao_userInfo', userInfo)
+      this.$route.params.id = id
+      this.$toast.success('登录成功')
+      if (this.fromRouteName) {
+        this.$router.back()
       } else {
-        // 将 id 存到 localStorage，防止刷新
-        const { user: { id }, token } = res.data.data
-        userInfo = JSON.stringify({ token, id })
-        localStorage.setItem('heimatoutiao_userInfo', userInfo)
-        this.$route.params.id = id
-        this.$toast.success('登录成功')
         this.$router.push({ path: `/personal/${id}` })
       }
     }

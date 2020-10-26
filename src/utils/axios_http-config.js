@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { Toast } from 'vant'
+import router from '@/router'
 
 axios.defaults.baseURL = 'http://localhost:3000'
 
@@ -9,6 +11,19 @@ axios.interceptors.request.use(config => {
     config.headers.Authorization = token
   }
   return config
+}, error => {
+  return Promise.reject(error)
+})
+
+axios.interceptors.response.use(response => {
+  const statusCode = response.data.statusCode
+  if (statusCode === 401 || statusCode === 403) {
+    Toast.fail(response.data.message + '，请登录')
+    // 使用 push 会出错
+    // router.push('/login')
+    window.location.href = '#/login'
+  }
+  return response
 }, error => {
   return Promise.reject(error)
 })
