@@ -41,58 +41,24 @@
         </van-button>
       </div>
     </main>
-    <!-- 精彩跟帖 -->
     <div :class="{ keeps: true, inputting: isFocus }">
       <h2>精彩跟帖</h2>
-      <div v-if="article.comment_length > 0" class="comment">
-        <div class="comment_wrapper">
-          <div class="comment_user">
-            <img src="http://localhost:3000/uploads/image/default.jpeg" alt="用户头像" />
-            <div class="comment_user-info">
-              <h3>火星网友</h3>
-              <span class="comment_time">2小时前</span>
-            </div>
-            <span class="comment_reply">回复</span>
-          </div>
-          <div class="comment_reply-area">
-            <div class="comment_wrapper">
-              <div class="comment_user">
-                <div class="comment_user-info">
-                  <h3>火星网友</h3>
-                  <span class="comment_time">2小时前</span>
-                </div>
-                <span class="comment_reply">回复</span>
-              </div>
-              <div class="comment_reply-area"></div>
-              <p class="comment_text">文章说得很有道理</p>
-            </div>
-            <div class="comment_wrapper">
-              <div class="comment_user">
-                <div class="comment_user-info">
-                  <h3>火星网友</h3>
-                  <span class="comment_time">2小时前</span>
-                </div>
-                <span class="comment_reply">回复</span>
-              </div>
-              <div class="comment_reply-area"></div>
-              <p class="comment_text">文章说得很有道理</p>
-            </div>
-          </div>
-          <p class="comment_text">文章说得很有道理</p>
-        </div>
-        <van-button round class="comment_more">更多跟帖</van-button>
-      </div>
-
-      <div v-else class="no-comment">
-        <p>暂无跟帖，抢占沙发</p>
-      </div>
+      <!-- 只渲染前两条 -->
+      <NewsArticleComment
+        v-for="(articleComment, index) in article.comments"
+        v-if="index < 2"
+        :key="articleComment.id"
+        :articleComment="articleComment"
+        :isInputting="isFocus"
+       />
+      <van-button v-if="article.comments.length > 2" round class="comment_more">更多跟帖</van-button>
     </div>
     <div class="leave-comment" id="leaveComment">
       <div v-show="isFocus === false" class="leave-comment_wrapper">
         <input type="text" placeholder="写跟帖" @focus="handleFocus">
         <div class="btn-group">
-          <button>
-            <van-icon class="iconfont iconpinglun" badge="99+" />
+          <button @click="$router.push(`/comment/${article.id}`)">
+            <van-icon class="iconfont iconpinglun" :badge="getCommentNum" />
           </button>
           <button
             :class="['iconfont', 'iconshoucang', article.has_star ? 'active' : '']"
@@ -115,13 +81,15 @@
 
 <script>
 import { NavBar as VanNavBar, Tag as VanTag } from 'vant'
+import NewsArticleComment from '@/components/NewsArticleComment.vue'
 import { dateFormat } from '@/utils/filters'
 
 export default {
   name: 'ArticleDetail',
   components: {
     VanNavBar,
-    VanTag
+    VanTag,
+    NewsArticleComment
   },
   data () {
     return {
@@ -140,7 +108,8 @@ export default {
         has_like: false,
         has_star: false,
         type: 1,
-        like_length: 0
+        like_length: 0,
+        comments: []
       },
       isFocus: false
     }
@@ -149,13 +118,28 @@ export default {
     // 根据id获取文章的详情，实现文章详情的动态渲染
     const id = this.$route.params.id
 
-    const [err, res] = await this.$api.getArticleDetialById(id)
+    const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(id)
 
-    if (err) {
-      return this.$toast.fail('获取文章数据失败')
+    if (getArticleDetialErr) {
+      return this.$toast.fail('获取文章数据错误')
     }
 
-    this.article = res.data.data
+    this.article = {
+      ...getArticleDetialRes.data.data,
+      comments: []
+    }
+
+    const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.article.id)
+
+    if (getCommentsErr) {
+      return this.$toast.fail('获取评论数据错误')
+    }
+
+    // 为了响应式数据，目的为了视图更新
+    this.article = {
+      ...this.article,
+      comments: getCommentsRes.data.data
+    }
   },
   methods: {
     async followThisUser () {
@@ -244,6 +228,17 @@ export default {
       if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
         this.isFocus = false
       }
+    }
+  },
+  computed: {
+    getCommentNum () {
+      const commentLen = this.article.comment_length
+      if (commentLen <= 0) {
+        return ''
+      } else if (commentLen > 99) {
+        return '99+'
+      }
+      return commentLen
     }
   },
   filters: {
@@ -357,74 +352,16 @@ video {
     font-size: common.baseSize(20);
     text-align: center;
   }
-  .comment {
+  .comment_more {
     display: flex;
-    flex-direction: column;
     justify-content: center;
-
-    &_wrapper {
-      border-bottom: 1px solid #ccc;
-      padding: common.baseSize(10) common.baseSize(14);
-    }
-    &_user {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: common.baseSize(15);
-      h3 {
-        font-size: common.baseSize(14);
-      }
-      img {
-        $size: common.baseSize(50);
-        width: $size;
-        height: $size;
-        border-radius: 50%;
-      }
-      span {
-        font-size: common.baseSize(12);
-        color: #999;
-        line-height: common.baseSize(25);
-      }
-    }
-    &_user-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      margin-left: common.baseSize(10);
-    }
-    &_text {
-      padding: common.baseSize(20) 0 common.baseSize(10) 0;
-      font-size: common.baseSize(14);
-    }
-    &_more {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: common.baseSize(120);
-      height: common.baseSize(30);
-      margin: common.baseSize(25) auto;
-      border: 1px solid #797979;
-      background-color: #f2f2f2;
-      font-size: common.baseSize(14);
-    }
-    &_reply-area {
-      border: 1px solid #d7d7d7;
-
-      .comment_wrapper:last-child {
-        border-bottom: none;
-      }
-    }
-  }
-  .no-comment {
-  @extend .comment_wrapper;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: common.baseSize(105);
-    p {
-      font-size: common.baseSize(14);
-      color: #aeaeae;
-    }
+    align-items: center;
+    width: common.baseSize(120);
+    height: common.baseSize(30);
+    margin: common.baseSize(25) auto;
+    border: 1px solid #797979;
+    background-color: #f2f2f2;
+    font-size: common.baseSize(14);
   }
 }
 

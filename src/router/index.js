@@ -20,6 +20,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "articleDetail" */ '@/views/ArticleDetail.vue')
   },
   {
+    path: '/comment/:id',
+    name: 'Comment',
+    component: () => import(/* webpackChunkName: "comment" */ '@/views/Comment.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
