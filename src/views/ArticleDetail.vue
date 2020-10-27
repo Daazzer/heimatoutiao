@@ -1,6 +1,6 @@
 <template>
   <div class="artical-detail" @click="handleClick">
-    <VanNavBar class="header" @click-left="$router.back()" left-arrow>
+    <VanNavBar fixed placeholder class="header" @click-left="$router.back()" left-arrow>
       <template #left>
         <van-icon class="icon-back" name="arrow-left back" />
         <span class="icon-logo iconfont iconnew new"></span>
@@ -21,7 +21,7 @@
         <span class="date">{{ article.user.create_date | dateFormat }}</span>
       </div>
       <div class="content">
-        <article v-if="article.type === 1" v-html="article.content" />
+        <article v-if="article.type === 1" v-html="article.content"></article>
         <video
           :poster="article.cover[0].url"
           :src="article.content"
@@ -45,43 +45,30 @@
       <h2>精彩跟帖</h2>
       <!-- 只渲染前两条 -->
       <NewsArticleComment
-        v-for="(articleComment, index) in article.comments"
-        v-if="index < 2"
-        :key="articleComment.id"
-        :articleComment="articleComment"
-        :isInputting="isFocus"
-       />
-      <van-button v-if="article.comments.length > 2" round class="comment_more">更多跟帖</van-button>
+        :articleComments="article.comments"
+        :maxShow="2"
+      />
+      <van-button
+        v-if="article.comments.length > 2"
+        round
+        class="comment_more"
+        @click="$router.push(`/comment/${article.id}`)"
+      >更多跟帖</van-button>
     </div>
-    <div class="leave-comment" id="leaveComment">
-      <div v-show="isFocus === false" class="leave-comment_wrapper">
-        <input type="text" placeholder="写跟帖" @focus="handleFocus">
-        <div class="btn-group">
-          <button @click="$router.push(`/comment/${article.id}`)">
-            <van-icon class="iconfont iconpinglun" :badge="getCommentNum" />
-          </button>
-          <button
-            :class="['iconfont', 'iconshoucang', article.has_star ? 'active' : '']"
-            @click="starArticle"
-          ></button>
-          <button class="iconfont iconfenxiang"></button>
-        </div>
-      </div>
-      <div v-show="isFocus === true" class="leave-comment_wrapper input">
-        <textarea
-          ref="leaveCommentInput"
-          cols="5"
-          placeholder="写跟帖"
-        ></textarea>
-        <van-button class="btn-send" type="danger" round size="mini">发送</van-button>
-      </div>
-    </div>
+    <CommentInputBar
+      :commentNum="getCommentNum"
+      :article="article"
+      :isInputting="isFocus"
+      @click.stop
+      @focus="focusCommentInputBar"
+    />
   </div>
 </template>
 
 <script>
 import { NavBar as VanNavBar, Tag as VanTag } from 'vant'
-import NewsArticleComment from '@/components/NewsArticleComment.vue'
+import NewsArticleComment from '@/components/NewsArticleComment'
+import CommentInputBar from '@/components/CommentInputBar.vue'
 import { dateFormat } from '@/utils/filters'
 
 export default {
@@ -89,7 +76,8 @@ export default {
   components: {
     VanNavBar,
     VanTag,
-    NewsArticleComment
+    NewsArticleComment,
+    CommentInputBar
   },
   data () {
     return {
@@ -181,22 +169,8 @@ export default {
       this.article.has_like = !this.article.has_like
       this.$toast.success(res.data.message)
     },
-    async starArticle() {
-      const [err, res] = await this.$api.starArticle(this.article.id)
-
-      if (err) {
-        return this.$toast.fail(`${this.article.has_star ? '' : '取消'}收藏失败，发生错误`)
-      } else if (res.data.statusCode) {
-        return
-      }
-
-      this.$toast.success(res.data.message)
-
-      this.article.has_star = !this.article.has_star
-    },
-    handleFocus () {
+    focusCommentInputBar () {
       this.isFocus = true
-      this.$refs.leaveCommentInput.focus()
     },
     /**
      * 判断当前元素是否为给定元素的后代
@@ -204,7 +178,7 @@ export default {
      * @param {selector} 祖先元素选择器
      * @returns {boolean}
      */
-    isAncestorElementOf (el, selector) {
+    /* isAncestorElementOf (el, selector) {
       const ancestor = document.querySelector(selector)
 
       if (el === ancestor) {
@@ -223,11 +197,12 @@ export default {
       }
 
       return true
-    },
-    handleClick (e) {
-      if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
+    }, */
+    handleClick () {
+      /* if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
         this.isFocus = false
-      }
+      } */
+      this.isFocus = false
     }
   },
   computed: {
@@ -252,7 +227,10 @@ export default {
 
 ::v-deep .header {
   height: common.baseSize(50);
-  background-color: #f2f2f2;
+
+  &, .van-nav-bar {
+    background-color: #f2f2f2;
+  }
   .icon {
     &-back {
       font-size: common.baseSize(15);
@@ -264,6 +242,7 @@ export default {
   }
 
   &_btn {
+    height: common.baseSize(24);
     padding: common.baseSize(5) common.baseSize(10);
     font-size: common.baseSize(12);
     background-color: #f00;
@@ -362,76 +341,6 @@ video {
     border: 1px solid #797979;
     background-color: #f2f2f2;
     font-size: common.baseSize(14);
-  }
-}
-
-.leave-comment {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  min-height: common.baseSize(50);
-  padding: common.baseSize(9) common.baseSize(16);
-  background-color: #f2f2f2;
-
-  &_wrapper {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    align-items: center;
-    &.input {
-      align-items: flex-end;
-    }
-
-    input, button, textarea {
-      border: none;
-    }
-
-    %commentInput {
-      padding: common.baseSize(8) common.baseSize(20);
-      font-size: common.baseSize(14);
-      color: #333;
-      background-color: #d7d7d7;
-    }
-
-    textarea {
-      @extend %commentInput;
-      width: common.baseSize(260);
-      height: common.baseSize(90);
-      border-radius: common.baseSize(15);
-      resize: none;
-    }
-
-    input {
-      @extend %commentInput;
-      $height: common.baseSize(30);
-      height: $height;
-      border-radius: $height / 2;
-    }
-    .btn-group {
-      display: flex;
-      button {
-        padding: 0;
-        margin-left: common.baseSize(18);
-        font-size: common.baseSize(20);
-        color: #7c7c7c;
-        .van-icon {
-          @extend button;
-        }
-        .van-info {
-          font-size: common.baseSize(12);
-          min-width: common.baseSize(14);
-          padding: 0 common.baseSize(3);
-        }
-        &.active {
-          color: #f00;
-        }
-      }
-    }
-    .btn-send {
-      padding: common.baseSize(8) common.baseSize(15);
-      font-size: common.baseSize(12);
-    }
   }
 }
 </style>

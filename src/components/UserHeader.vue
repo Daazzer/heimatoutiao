@@ -29,7 +29,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: common.baseSize(21) common.baseSize(26);
+  padding: common.baseSize(21);
   $headerFontSize: common.baseSize(20);
   .back {
     color: #464646;

@@ -1,8 +1,12 @@
 <template>
-  <div v-if="articleComment" class="comment">
-    <div class="comment_wrapper">
+  <div v-if="articleComments && articleComments.length > 0" class="comment">
+    <div
+      v-for="articleComment in articleComments.filter((v, i) => maxShow ? i < maxShow : true)"
+      :key="articleComment.id"
+      class="comment_wrapper"
+    >
       <div class="comment_user">
-        <van-image :src="articleComment.user.head_img" alt="用户头像" />
+        <van-image :src="articleComment.user.head_img ? articleComment.user.head_img : headImg" alt="用户头像" />
         <div class="comment_user-info">
           <h3>{{ articleComment.user.nickname }}</h3>
           <span class="comment_time">{{ articleComment.create_date | timeDiff }}</span>
@@ -25,11 +29,17 @@
 
 <script>
 import { timeDiff } from '@/utils/filters'
+import axios from '@/utils/axios_http-config'
 import NewsArticleCommentReply from './NewsArticleCommentReply.vue'
 
 export default {
   name: 'NewsArticleComment',
-  props: ['articleComment'],
+  props: ['articleComments', 'maxShow'],
+  data () {
+    return {
+      headImg: axios.defaults.baseURL + '/uploads/image/default.jpeg'
+    }
+  },
   components: {
     NewsArticleCommentReply
   },
@@ -59,7 +69,7 @@ export default {
     h3 {
       font-size: common.baseSize(14);
     }
-    .van-image {
+    ::v-deep .van-image__img {
       $size: common.baseSize(50);
       width: $size;
       height: $size;
@@ -83,11 +93,11 @@ export default {
   }
 }
 .no-comment {
-@extend .comment_wrapper;
-display: flex;
-justify-content: center;
-align-items: center;
-height: common.baseSize(105);
+  @extend .comment_wrapper;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: common.baseSize(105);
   p {
     font-size: common.baseSize(14);
     color: #aeaeae;
