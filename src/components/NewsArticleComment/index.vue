@@ -6,7 +6,7 @@
       class="comment_wrapper"
     >
       <div class="comment_user">
-        <van-image :src="articleComment.user.head_img ? articleComment.user.head_img : headImg" alt="用户头像" />
+        <van-image :src="articleComment.user.head_img" alt="用户头像" />
         <div class="comment_user-info">
           <h3>{{ articleComment.user.nickname }}</h3>
           <span class="comment_time">{{ articleComment.create_date | timeDiff }}</span>
@@ -29,17 +29,11 @@
 
 <script>
 import { timeDiff } from '@/utils/filters'
-import axios from '@/utils/axios_http-config'
 import NewsArticleCommentReply from './NewsArticleCommentReply.vue'
 
 export default {
   name: 'NewsArticleComment',
   props: ['articleComments', 'maxShow'],
-  data () {
-    return {
-      headImg: axios.defaults.baseURL + '/uploads/image/default.jpeg'
-    }
-  },
   components: {
     NewsArticleCommentReply
   },
@@ -69,11 +63,17 @@ export default {
     h3 {
       font-size: common.baseSize(14);
     }
-    ::v-deep .van-image__img {
-      $size: common.baseSize(50);
-      width: $size;
-      height: $size;
-      border-radius: 50%;
+    ::v-deep {
+      .van-image {
+        $size: common.baseSize(50);
+        width: $size;
+        height: $size;
+      }
+      .van-image__img,
+      .van-image__error {
+        @extend .van-image;
+        border-radius: 50%;
+      }
     }
     span {
       font-size: common.baseSize(12);

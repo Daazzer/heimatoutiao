@@ -1,5 +1,5 @@
 <template>
-  <div class="artical-detail" @click="handleClick">
+  <div class="artical-detail" @click="isInputting = false">
     <VanNavBar fixed placeholder class="header" @click-left="$router.back()" left-arrow>
       <template #left>
         <van-icon class="icon-back" name="arrow-left back" />
@@ -41,7 +41,7 @@
         </van-button>
       </div>
     </main>
-    <div :class="{ keeps: true, inputting: isFocus }">
+    <div :class="{ keeps: true, inputting: isInputting }">
       <h2>精彩跟帖</h2>
       <!-- 只渲染前两条 -->
       <NewsArticleComment
@@ -56,11 +56,12 @@
       >更多跟帖</van-button>
     </div>
     <CommentInputBar
-      :commentNum="getCommentNum"
       :article="article"
-      :isInputting="isFocus"
+      :isInputting="isInputting"
       @click.stop
-      @focus="focusCommentInputBar"
+      @inputting="isInputting = true"
+      @stararticle="article.has_star = !article.has_star"
+      @sendcomment="isInputting = false"
     />
   </div>
 </template>
@@ -70,6 +71,7 @@ import { NavBar as VanNavBar, Tag as VanTag } from 'vant'
 import NewsArticleComment from '@/components/NewsArticleComment'
 import CommentInputBar from '@/components/CommentInputBar.vue'
 import { dateFormat } from '@/utils/filters'
+import axios from '@/utils/axios_http-config'
 
 export default {
   name: 'ArticleDetail',
@@ -99,7 +101,7 @@ export default {
         like_length: 0,
         comments: []
       },
-      isFocus: false
+      isInputting: false
     }
   },
   async mounted () {
@@ -123,10 +125,17 @@ export default {
       return this.$toast.fail('获取评论数据错误')
     }
 
+    const comments = getCommentsRes.data.data.map(v => {
+      const baseURL = axios.defaults.baseURL
+      const defaultImg = baseURL + '/uploads/image/default.jpeg'
+      const userHeadImg = v.user.head_img
+      v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
+      return v
+    })
     // 为了响应式数据，目的为了视图更新
     this.article = {
       ...this.article,
-      comments: getCommentsRes.data.data
+      comments
     }
   },
   methods: {
@@ -169,9 +178,6 @@ export default {
       this.article.has_like = !this.article.has_like
       this.$toast.success(res.data.message)
     },
-    focusCommentInputBar () {
-      this.isFocus = true
-    },
     /**
      * 判断当前元素是否为给定元素的后代
      * @param {el} 开始往上查找的元素
@@ -198,23 +204,11 @@ export default {
 
       return true
     }, */
-    handleClick () {
-      /* if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
-        this.isFocus = false
-      } */
-      this.isFocus = false
-    }
-  },
-  computed: {
-    getCommentNum () {
-      const commentLen = this.article.comment_length
-      if (commentLen <= 0) {
-        return ''
-      } else if (commentLen > 99) {
-        return '99+'
-      }
-      return commentLen
-    }
+    // handleClick () {
+    //   if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
+    //     this.isFocus = false
+    //   }
+    // }
   },
   filters: {
     dateFormat
@@ -224,7 +218,6 @@ export default {
 
 <style lang='scss' scoped>
 @use "@/styles/common.scss";
-
 ::v-deep .header {
   height: common.baseSize(50);
 

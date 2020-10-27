@@ -19,10 +19,21 @@ const starArticle = id => axios.get(`/post_star/${id}`).then(res => [null, res])
 
 const getComments = id => axios.get(`/post_comment/${id}`).then(res => [null, res]).catch(err => [err])
 
+/**
+ * 发布评论
+ * @param {number} id 文章id
+ * @param {Object} data 发布评论的参数
+ * @param {string} data.content 评论内容
+ * @param {number} [data.parent_id=null] 回复 id
+ * @returns {Promise<Response>}
+ */
+const postComment = (id, data) => axios.post(`/post_comment/${id}`, data).then(res => [null, res]).catch(err => [err])
+
 export default {
   getNewsArticle,
   getArticleDetialById,
   likeArticle,
   starArticle,
-  getComments
+  getComments,
+  postComment
 }

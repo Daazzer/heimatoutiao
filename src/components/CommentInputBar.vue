@@ -1,14 +1,14 @@
 <template>
-  <div @click.stop="$emit('click', $event)" class="comment-input-bar">
+  <div @click="$emit('click', $event)" class="comment-input-bar">
     <div v-show="isInputting === false" class="comment-input-bar_wrapper">
       <input
         type="text"
         placeholder="写跟帖"
-        @focus="$emit('focus', $event)"
+        @focus="$emit('inputting')"
       />
       <div class="btn-group">
         <button @click="$router.push(`/comment/${article.id}`)">
-          <van-icon class="iconfont iconpinglun" :badge="commentNum" />
+          <van-icon class="iconfont iconpinglun" :badge="getCommentNum" />
         </button>
         <button
           :class="[
@@ -26,8 +26,15 @@
         ref="commentInputArea"
         cols="5"
         placeholder="写跟帖"
+        v-model="commentText"
       ></textarea>
-      <van-button class="btn-send" type="danger" round size="mini">发送</van-button>
+      <van-button
+        class="btn-send"
+        type="danger"
+        round
+        size="mini"
+        @click="sendComment"
+      >发送</van-button>
     </div>
   </div>
 </template>
@@ -35,9 +42,14 @@
 <script>
 export default {
   name: 'CommentInputBar',
-  props: ['commentNum', 'article', 'isInputting'],
+  props: ['article', 'isInputting'],
+  data () {
+    return {
+      commentText: ''
+    }
+  },
   methods: {
-    async starArticle(e) {
+    async starArticle() {
       const [err, res] = await this.$api.starArticle(this.article.id)
 
       if (err) {
@@ -48,8 +60,41 @@ export default {
 
       this.$toast.success(res.data.message)
 
-      this.article.has_star = !this.article.has_star
+      this.$emit('stararticle')
     },
+    async sendComment (e) {
+      const id = this.article.id
+      const content = this.commentText.trim()
+
+      if (content === '') {
+        return this.$toast.fail('评论不能为空')
+      }
+
+      const [err, res] = await this.$api.postComment(id, { content })
+
+      if (err) {
+        return this.$toast.fail('发送评论时出错')
+      }
+
+      const resMsg = res.data.message
+
+      if (resMsg === '评论发布成功') {
+        this.$toast.success(resMsg)
+
+        this.$emit('sendcomment')
+      }
+    }
+  },
+  computed: {
+    getCommentNum () {
+      const commentLen = this.article.comment_length
+      if (commentLen <= 0) {
+        return ''
+      } else if (commentLen > 99) {
+        return '99+'
+      }
+      return commentLen
+    }
   }
 }
 </script>
