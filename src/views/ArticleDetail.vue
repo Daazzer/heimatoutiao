@@ -218,6 +218,10 @@ export default {
 
 <style lang='scss' scoped>
 @use "@/styles/common.scss";
+
+.artical-detail {
+  height: 100vh;
+}
 ::v-deep .header {
   height: common.baseSize(50);
 

@@ -17,7 +17,7 @@ const likeArticle = id => axios.get(`/post_like/${id}`).then(res => [null, res])
 
 const starArticle = id => axios.get(`/post_star/${id}`).then(res => [null, res]).catch(err => [err])
 
-const getComments = id => axios.get(`/post_comment/${id}`).then(res => [null, res]).catch(err => [err])
+const getComments = (id, params) => axios.get(`/post_comment/${id}`, { params }).then(res => [null, res]).catch(err => [err])
 
 /**
  * 发布评论

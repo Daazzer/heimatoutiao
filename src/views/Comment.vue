@@ -2,16 +2,21 @@
   <div class="comment" @click="isInputting = false">
     <UserHeader title="精彩跟帖" />
     <van-list class="comment_list">
-      <NewsArticleComment :articleComments="comments" />
+      <NewsArticleComment
+        :articleComments="comments"
+        @replycomment="handleReplyComment"
+      />
     </van-list>
     <div :class="{ comment_bottom: true, inputting: isInputting }">我也是有底线的</div>
     <CommentInputBar
       :article="article"
       :isInputting="isInputting"
+      :replyUserName="replyUserName"
       @click.stop
       @inputting="isInputting = true"
       @stararticle="article.has_star = !article.has_star"
-      @sendcomment="isInputting = false"
+      @sendcomment="handleSendComment"
+      @cancelreply="replyUserName = ''"
     />
   </div>
 </template>
@@ -49,46 +54,63 @@ export default {
         like_length: 0,
       },
       comments: [],
+      replyUserName: '',
       isInputting: false
     }
   },
-  async mounted () {
-    // 根据id获取文章的详情，实现文章详情的动态渲染
-    const id = this.$route.params.id
-
-    const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(id)
-
-    if (getArticleDetialErr) {
-      return this.$toast.fail('获取文章数据错误')
-    }
-
-    this.article = getArticleDetialRes.data.data
-
-    const [err, res] = await this.$api.getComments(this.$route.params.id)
-
-    // console.log(res)
-
-    if (err) {
-      return this.$toast.fail('获取评论数据出错')
-    } else if (res.data.statusCode) {
-      return
-    }
-
-    this.comments = res.data.data.map(v => {
-      const baseURL = axios.defaults.baseURL
-      const defaultImg = baseURL + '/uploads/image/default.jpeg'
-      const userHeadImg = v.user.head_img
-      v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
-      return v
-    })
+  mounted () {
+    this.initPage()
   },
   methods: {
     async initPage () {
+      // 根据id获取文章的详情，实现文章详情的动态渲染
+      const id = this.$route.params.id
 
+      const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(id)
+
+      if (getArticleDetialErr) {
+        return this.$toast.fail('获取文章数据错误')
+      }
+
+      this.article = getArticleDetialRes.data.data
+
+      const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.$route.params.id, { pageIndex: 1, pageSize: 40 })
+
+      // console.log(getCommentsRes)
+
+      if (getCommentsErr) {
+        return this.$toast.fail('获取评论数据出错')
+      } else if (getCommentsRes.data.statusCode) {
+        return
+      }
+
+      this.comments = getCommentsRes.data.data.map(v => {
+        const baseURL = axios.defaults.baseURL
+        const defaultImg = baseURL + '/uploads/image/default.jpeg'
+        const userHeadImg = v.user.head_img
+        v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
+        return v
+      })
+    },
+    handleSendComment () {
+      this.isInputting = false
+      this.initPage()
+      window.scrollTo(0, 0)
+    },
+    handleReplyComment (userName, e) {
+      e.stopPropagation()
+      this.isInputting = true
+      this.replyUserName = userName
     }
   }
 }
 </script>
+
+<style lang="scss">
+body {
+  height: 100vh;
+}
+</style>
 
 <style lang="scss" scoped>
 @use "@/styles/common.scss";

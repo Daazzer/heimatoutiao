@@ -8,7 +8,10 @@
       />
       <div class="btn-group">
         <button @click="$router.push(`/comment/${article.id}`)">
-          <van-icon class="iconfont iconpinglun" :badge="getCommentNum" />
+          <van-icon
+            class="iconfont iconpinglun"
+            :badge="getCommentNum"
+          />
         </button>
         <button
           :class="[
@@ -25,16 +28,27 @@
       <textarea
         ref="commentInputArea"
         cols="5"
-        placeholder="写跟帖"
-        v-model="commentText"
+        :placeholder="replyUserName === '' ? '写跟帖' : `回复@${replyUserName}`"
+        v-model="inputCommentText"
       ></textarea>
-      <van-button
-        class="btn-send"
-        type="danger"
-        round
-        size="mini"
-        @click="sendComment"
-      >发送</van-button>
+      <div class="btn-opt">
+        <van-button
+          class="btn-cancel"
+          type="danger"
+          round
+          size="mini"
+          :disabled="replyUserName === ''"
+          @click="$emit('cancelreply')"
+        >取消回复</van-button>
+        <van-button
+          class="btn-send"
+          type="danger"
+          round
+          size="mini"
+          :disabled="inputCommentText === ''"
+          @click="sendComment"
+        >发送</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -42,10 +56,10 @@
 <script>
 export default {
   name: 'CommentInputBar',
-  props: ['article', 'isInputting'],
+  props: ['article', 'isInputting', 'replyUserName'],
   data () {
     return {
-      commentText: ''
+      inputCommentText: ''
     }
   },
   methods: {
@@ -64,7 +78,7 @@ export default {
     },
     async sendComment (e) {
       const id = this.article.id
-      const content = this.commentText.trim()
+      const content = this.inputCommentText.trim()
 
       if (content === '') {
         return this.$toast.fail('评论不能为空')
@@ -80,6 +94,9 @@ export default {
 
       if (resMsg === '评论发布成功') {
         this.$toast.success(resMsg)
+
+        // 清空输入框
+        this.inputCommentText = ''
 
         this.$emit('sendcomment')
       }
@@ -164,7 +181,13 @@ export default {
         }
       }
     }
-    .btn-send {
+    .btn-opt {
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-send, .btn-cancel {
+      margin: 0 0 common.baseSize(10);
+      min-width: common.baseSize(70);
       padding: common.baseSize(8) common.baseSize(15);
       font-size: common.baseSize(12);
     }

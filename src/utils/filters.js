@@ -46,5 +46,5 @@ export const timeDiff = unformatDate => {
 
   const dateTxt = [cYear, cMonth, cDay, cHours, cMinute].find(txt => txt !== '')
 
-  return dateTxt === '' ? '刚刚' : dateTxt + '前'
+  return dateTxt === undefined ? '刚刚' : dateTxt + '前'
 }
