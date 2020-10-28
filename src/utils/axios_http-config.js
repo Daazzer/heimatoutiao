@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { Toast } from 'vant'
-import router from '@/router'
 
 axios.defaults.baseURL = 'http://localhost:3000'
 

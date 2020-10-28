@@ -1,13 +1,27 @@
 <template>
   <div class="comment" @click="isInputting = false">
     <UserHeader title="精彩跟帖" />
-    <van-list class="comment_list">
-      <NewsArticleComment
-        :articleComments="comments"
-        @replycomment="handleReplyComment"
-      />
-    </van-list>
-    <div :class="{ comment_bottom: true, inputting: isInputting }">我也是有底线的</div>
+    <van-pull-refresh
+      v-model="commentList.refreshing"
+      @refresh="refreshPage"
+      success-text="刷新成功"
+    >
+      <van-list
+        :class="{ comment_list: true, inputting: isInputting }"
+        v-model="commentList.loading"
+        :finished="commentList.finished"
+        finished-text="我也是有底线的"
+        :error.sync="commentList.error"
+        error-text="加载评论失败，点击重新加载"
+        @load="loadComment"
+      >
+        <NewsArticleComment
+          :articleComments="commentList.comments"
+          @replycomment="handleReplyComment"
+        />
+      </van-list>
+    </van-pull-refresh>
+    <!-- <div :class="{ comment_bottom: true, inputting: isInputting }">我也是有底线的</div> -->
     <CommentInputBar
       :article="article"
       :isInputting="isInputting"
@@ -53,49 +67,91 @@ export default {
         type: 1,
         like_length: 0,
       },
-      comments: [],
+      commentList: {
+        refreshing: false,
+        loading: false,
+        finished: false,
+        error: false,
+        pageIndex: 1,
+        pageSize: 6,
+        comments: []
+      },
       replyUser: null,
       isInputting: false
     }
   },
   mounted () {
-    this.initPage()
+    this.refreshPage()
   },
   methods: {
-    async initPage () {
-      // 根据id获取文章的详情，实现文章详情的动态渲染
-      const id = this.$route.params.id
-
-      const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(id)
+    async initArticle () {
+      // 拿文章数据目的为了记录评论输入框的状态
+      const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(this.$route.params.id)
 
       if (getArticleDetialErr) {
         return this.$toast.fail('获取文章数据错误')
       }
 
       this.article = getArticleDetialRes.data.data
+    },
+    async loadComment (isReset = false) {
+      if (this.commentList.comments.length === 0 || isReset) {
+        this.commentList.pageIndex = 1
+      } else {
+        this.commentList.pageIndex++
+      }
 
-      const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.$route.params.id, { pageIndex: 1, pageSize: 40 })
+      const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.$route.params.id, {
+        pageIndex: this.commentList.pageIndex,
+        pageSize: this.commentList.pageSize
+      })
 
-      // console.log(getCommentsRes)
+      if (getCommentsErr || getCommentsRes.data.statusCode) {
+        this.commentList.comments = isReset ? [] : this.commentList.comments
+      }
 
       if (getCommentsErr) {
-        return this.$toast.fail('获取评论数据出错')
+        this.commentList.error = true
+        return
       } else if (getCommentsRes.data.statusCode) {
+        this.commentList.loading = false
         return
       }
 
-      this.comments = getCommentsRes.data.data.map(v => {
+      const comments = isReset ? [] : this.commentList.comments
+
+      const resComments = getCommentsRes.data.data.map(v => {
         const baseURL = axios.defaults.baseURL
         const defaultImg = baseURL + '/uploads/image/default.jpeg'
         const userHeadImg = v.user.head_img
         v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
         return v
       })
+
+      comments.push(...resComments)
+
+      if (resComments.length < this.commentList.pageSize) {
+        this.commentList.finished = true
+      }
+
+      // 响应式数据，用于动态刷新页面
+      this.commentList = {
+        ...this.commentList,
+        comments
+      }
+
+      this.commentList.loading = false
+    },
+    refreshPage () {
+      this.commentList.finished = false
+      this.initArticle()
+        .then(() => this.loadComment(true))
+        .then(() => this.commentList.refreshing = false)
     },
     handleSendComment () {
       this.isInputting = false
       this.replyUser = null
-      this.initPage()
+      this.refreshPage()
       window.scrollTo(0, 0)
     },
     handleReplyComment (replyUser, e) {
@@ -107,24 +163,24 @@ export default {
 }
 </script>
 
-<style lang="scss">
-body {
-  height: 100vh;
-}
-</style>
-
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
 .comment {
-  &_bottom {
-    margin-top: common.baseSize(22);
+  &_list {
     padding-bottom: common.baseSize(52);
-    text-align: center;
-    font-size: common.baseSize(14);
-    color: #707070;
     &.inputting {
       padding-bottom: common.baseSize(120);
     }
   }
+  // &_bottom {
+  //   margin-top: common.baseSize(22);
+  //   padding-bottom: common.baseSize(52);
+  //   text-align: center;
+  //   font-size: common.baseSize(14);
+  //   color: #707070;
+  //   &.inputting {
+  //     padding-bottom: common.baseSize(120);
+  //   }
+  // }
 }
 </style>

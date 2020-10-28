@@ -1,6 +1,6 @@
 <template>
   <div class="artical-detail" @click="isInputting = false">
-    <VanNavBar fixed placeholder class="header" @click-left="$router.back()" left-arrow>
+    <van-nav-bar fixed placeholder class="header" @click-left="$router.back()" left-arrow>
       <template #left>
         <van-icon class="icon-back" name="arrow-left back" />
         <span class="icon-logo iconfont iconnew new"></span>
@@ -13,7 +13,7 @@
           @click="followThisUser"
         >{{ article.has_follow ? '已关注' : '关注' }}</van-button>
       </template>
-    </VanNavBar>
+    </van-nav-bar>
     <main class="detail">
       <h1 class="title">{{ article.title }}</h1>
       <div class="desc">
@@ -47,6 +47,7 @@
       <NewsArticleComment
         :articleComments="article.comments"
         :maxShow="2"
+        @replycomment="handleReplyComment"
       />
       <van-button
         v-if="article.comments.length > 2"
@@ -58,16 +59,18 @@
     <CommentInputBar
       :article="article"
       :isInputting="isInputting"
+      :replyUser="replyUser"
       @click.stop
       @inputting="isInputting = true"
       @stararticle="article.has_star = !article.has_star"
-      @sendcomment="isInputting = false"
+      @sendcomment="handleSendComment"
+      @cancelreply="replyUser = null"
     />
   </div>
 </template>
 
 <script>
-import { NavBar as VanNavBar, Tag as VanTag } from 'vant'
+import { Tag as VanTag } from 'vant'
 import NewsArticleComment from '@/components/NewsArticleComment'
 import CommentInputBar from '@/components/CommentInputBar.vue'
 import { dateFormat } from '@/utils/filters'
@@ -76,7 +79,6 @@ import axios from '@/utils/axios_http-config'
 export default {
   name: 'ArticleDetail',
   components: {
-    VanNavBar,
     VanTag,
     NewsArticleComment,
     CommentInputBar
@@ -101,44 +103,48 @@ export default {
         like_length: 0,
         comments: []
       },
-      isInputting: false
+      isInputting: false,
+      replyUser: null
     }
   },
-  async mounted () {
-    // 根据id获取文章的详情，实现文章详情的动态渲染
-    const id = this.$route.params.id
-
-    const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(id)
-
-    if (getArticleDetialErr) {
-      return this.$toast.fail('获取文章数据错误')
-    }
-
-    this.article = {
-      ...getArticleDetialRes.data.data,
-      comments: []
-    }
-
-    const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.article.id)
-
-    if (getCommentsErr) {
-      return this.$toast.fail('获取评论数据错误')
-    }
-
-    const comments = getCommentsRes.data.data.map(v => {
-      const baseURL = axios.defaults.baseURL
-      const defaultImg = baseURL + '/uploads/image/default.jpeg'
-      const userHeadImg = v.user.head_img
-      v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
-      return v
-    })
-    // 为了响应式数据，目的为了视图更新
-    this.article = {
-      ...this.article,
-      comments
-    }
+  mounted () {
+    this.initPage()
   },
   methods: {
+    async initPage () {
+      // 根据id获取文章的详情，实现文章详情的动态渲染
+      const id = this.$route.params.id
+
+      const [getArticleDetialErr, getArticleDetialRes] = await this.$api.getArticleDetialById(id)
+
+      if (getArticleDetialErr) {
+        return this.$toast.fail('获取文章数据错误')
+      }
+
+      this.article = {
+        ...getArticleDetialRes.data.data,
+        comments: []
+      }
+
+      const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.article.id)
+
+      if (getCommentsErr) {
+        return this.$toast.fail('获取评论数据错误')
+      }
+
+      const comments = getCommentsRes.data.data.map(v => {
+        const baseURL = axios.defaults.baseURL
+        const defaultImg = baseURL + '/uploads/image/default.jpeg'
+        const userHeadImg = v.user.head_img
+        v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
+        return v
+      })
+      // 为了响应式数据，目的为了视图更新
+      this.article = {
+        ...this.article,
+        comments
+      }
+    },
     async followThisUser () {
       const hasfollow = this.article.has_follow
       const id = this.article.user.id
@@ -178,6 +184,17 @@ export default {
       this.article.has_like = !this.article.has_like
       this.$toast.success(res.data.message)
     },
+    handleSendComment () {
+      this.isInputting = false
+      this.replyUser = null
+      this.initPage()
+      window.scrollTo(0, 0)
+    },
+    handleReplyComment (replyUser, e) {
+      e.stopPropagation()
+      this.isInputting = true
+      this.replyUser = replyUser
+    }
     /**
      * 判断当前元素是否为给定元素的后代
      * @param {el} 开始往上查找的元素

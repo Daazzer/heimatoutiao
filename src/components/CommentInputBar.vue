@@ -4,7 +4,7 @@
       <input
         type="text"
         placeholder="写跟帖"
-        @focus="$emit('inputting')"
+        @focus="handleFocus"
       />
       <div class="btn-group">
         <button @click="gotoComment">
@@ -79,10 +79,7 @@ export default {
     async sendComment (e) {
       const id = this.article.id
       const content = this.inputCommentText.trim()
-      // console.log(this.replyUser === null)
       const parent_id = this.replyUser === null ? null : this.replyUser.id
-
-      console.log(parent_id)
 
       if (content === '') {
         return this.$toast.fail('评论不能为空')
@@ -113,6 +110,11 @@ export default {
         return
       }
       this.$router.push(`/comment/${this.article.id}`)
+    },
+    handleFocus () {
+      setTimeout(() => this.$refs.commentInputArea.focus(), 100)
+
+      this.$emit('inputting')
     }
   },
   computed: {
