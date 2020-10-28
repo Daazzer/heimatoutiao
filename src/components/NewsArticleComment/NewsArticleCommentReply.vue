@@ -30,11 +30,12 @@ export default {
   },
   methods: {
     replycomment (e) {
-      const userName = this.parent.user.nickname
-      this.$emit('replycomment', userName, e)
+      // const userName = this.parent.user.nickname
+      const replyUser = this.parent
+      this.$emit('replycomment', replyUser, e)
     },
-    handleReplyComment (userName, e) {
-      this.$emit('replycomment', userName, e)
+    handleReplyComment (replyUser, e) {
+      this.$emit('replycomment', replyUser, e)
     }
   }
 }

@@ -11,12 +11,12 @@
     <CommentInputBar
       :article="article"
       :isInputting="isInputting"
-      :replyUserName="replyUserName"
+      :replyUser="replyUser"
       @click.stop
       @inputting="isInputting = true"
       @stararticle="article.has_star = !article.has_star"
       @sendcomment="handleSendComment"
-      @cancelreply="replyUserName = ''"
+      @cancelreply="replyUser = null"
     />
   </div>
 </template>
@@ -54,7 +54,7 @@ export default {
         like_length: 0,
       },
       comments: [],
-      replyUserName: '',
+      replyUser: null,
       isInputting: false
     }
   },
@@ -94,13 +94,14 @@ export default {
     },
     handleSendComment () {
       this.isInputting = false
+      this.replyUser = null
       this.initPage()
       window.scrollTo(0, 0)
     },
-    handleReplyComment (userName, e) {
+    handleReplyComment (replyUser, e) {
       e.stopPropagation()
       this.isInputting = true
-      this.replyUserName = userName
+      this.replyUser = replyUser
     }
   }
 }

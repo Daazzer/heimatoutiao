@@ -11,7 +11,10 @@
           <h3>{{ articleComment.user.nickname }}</h3>
           <span class="comment_time">{{ articleComment.create_date | timeDiff }}</span>
         </div>
-        <span class="comment_reply-btn" @click="replycomment($event, index)">回复</span>
+        <span
+          class="comment_reply-btn"
+          @click="replycomment($event, index)"
+        >回复</span>
       </div>
       <!-- 插入评论回复 -->
       <NewsArticleCommentReply
@@ -40,11 +43,12 @@ export default {
   },
   methods: {
     replycomment (e, index) {
-      const userName = this.articleComments[index].user.nickname
-      this.$emit('replycomment', userName, e)
+      // const userName = this.articleComments[index].user.nickname
+      const replyUser = this.articleComments[index]
+      this.$emit('replycomment', replyUser, e)
     },
-    handleReplyComment (userName, e) {
-      this.$emit('replycomment', userName, e)
+    handleReplyComment (replyUser, e) {
+      this.$emit('replycomment', replyUser, e)
     }
   },
   filters: {

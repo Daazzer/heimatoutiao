@@ -7,7 +7,7 @@
         @focus="$emit('inputting')"
       />
       <div class="btn-group">
-        <button @click="$router.push(`/comment/${article.id}`)">
+        <button @click="gotoComment">
           <van-icon
             class="iconfont iconpinglun"
             :badge="getCommentNum"
@@ -56,7 +56,7 @@
 <script>
 export default {
   name: 'CommentInputBar',
-  props: ['article', 'isInputting', 'replyUserName'],
+  props: ['article', 'isInputting', 'replyUser'],
   data () {
     return {
       inputCommentText: ''
@@ -79,12 +79,19 @@ export default {
     async sendComment (e) {
       const id = this.article.id
       const content = this.inputCommentText.trim()
+      // console.log(this.replyUser === null)
+      const parent_id = this.replyUser === null ? null : this.replyUser.id
+
+      console.log(parent_id)
 
       if (content === '') {
         return this.$toast.fail('评论不能为空')
       }
 
-      const [err, res] = await this.$api.postComment(id, { content })
+      const [err, res] = await this.$api.postComment(id, {
+        content,
+        parent_id
+      })
 
       if (err) {
         return this.$toast.fail('发送评论时出错')
@@ -100,6 +107,12 @@ export default {
 
         this.$emit('sendcomment')
       }
+    },
+    gotoComment () {
+      if (this.$route.name === 'Comment') {
+        return
+      }
+      this.$router.push(`/comment/${this.article.id}`)
     }
   },
   computed: {
@@ -111,6 +124,9 @@ export default {
         return '99+'
       }
       return commentLen
+    },
+    replyUserName () {
+      return this.replyUser === null ? '' : this.replyUser.user.nickname
     }
   }
 }
@@ -141,7 +157,6 @@ export default {
     }
 
     %commentInput {
-      padding: common.baseSize(8) common.baseSize(20);
       font-size: common.baseSize(14);
       color: #333;
       background-color: #d7d7d7;
@@ -149,14 +164,15 @@ export default {
 
     textarea {
       @extend %commentInput;
+      padding: common.baseSize(12) common.baseSize(20);
       width: common.baseSize(260);
       height: common.baseSize(90);
       border-radius: common.baseSize(15);
       resize: none;
     }
-
     input {
       @extend %commentInput;
+      padding: common.baseSize(8) common.baseSize(20);
       $height: common.baseSize(30);
       height: $height;
       border-radius: $height / 2;
@@ -184,11 +200,12 @@ export default {
     .btn-opt {
       display: flex;
       flex-direction: column;
+      margin-left: common.baseSize(10);
     }
     .btn-send, .btn-cancel {
       margin: 0 0 common.baseSize(10);
-      min-width: common.baseSize(70);
-      padding: common.baseSize(8) common.baseSize(15);
+      min-width: common.baseSize(80);
+      padding: common.baseSize(8);
       font-size: common.baseSize(12);
     }
   }

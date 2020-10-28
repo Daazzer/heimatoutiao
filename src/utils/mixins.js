@@ -5,3 +5,5 @@ export default {
     this.$api = api
   }
 }
+
+// **** 尝试用 Vue.prototype ****
