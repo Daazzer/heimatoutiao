@@ -28,7 +28,7 @@
       <textarea
         ref="commentInputArea"
         cols="5"
-        :placeholder="replyUserName === '' ? '写跟帖' : `回复@${replyUserName}`"
+        :placeholder="replyUserName === '' ? '写跟帖' : `回复 @${replyUserName}`"
         v-model="inputCommentText"
       ></textarea>
       <div class="btn-opt">
@@ -166,6 +166,7 @@ export default {
 
     textarea {
       @extend %commentInput;
+      flex: 1;
       padding: common.baseSize(12) common.baseSize(20);
       width: common.baseSize(260);
       height: common.baseSize(90);
@@ -174,6 +175,7 @@ export default {
     }
     input {
       @extend %commentInput;
+      flex: 1;
       padding: common.baseSize(8) common.baseSize(20);
       $height: common.baseSize(30);
       height: $height;
@@ -206,8 +208,8 @@ export default {
     }
     .btn-send, .btn-cancel {
       margin: 0 0 common.baseSize(10);
-      min-width: common.baseSize(80);
-      padding: common.baseSize(8);
+      min-height: common.baseSize(26);
+      min-width: common.baseSize(75);
       font-size: common.baseSize(12);
     }
   }

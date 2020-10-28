@@ -25,6 +25,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "comment" */ '@/views/Comment.vue')
   },
   {
+    path: '/cateManager',
+    name: 'CateManager',
+    component: () => import(/* webpackChunkName: "cateManager" */ '@/views/CateManager.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')

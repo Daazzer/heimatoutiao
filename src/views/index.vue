@@ -13,7 +13,12 @@
       </router-link>
     </header>
     <nav class="index_nav">
-      <VanTabs v-model="tabNav.active" sticky swipeable>
+      <VanTabs
+        class="index_tablist"
+        v-model="tabNav.active"
+        sticky
+        swipeable
+      >
         <VanTab
           v-for="categoryItem in tabNav.categoryItems"
           :title="categoryItem.name"
@@ -41,6 +46,13 @@
           </van-pull-refresh>
         </VanTab>
       </VanTabs>
+      <VanSticky class="index_cate-sticky">
+        <van-button
+          class="index_cate-sticky_manager-btn"
+          to="/cateManager"
+          icon="plus"
+        />
+      </VanSticky>
     </nav>
   </div>
 </template>
@@ -49,6 +61,7 @@
 import {
   Tab as VanTab,
   Tabs as VanTabs,
+  Sticky as VanSticky
 } from 'vant'
 import NewsArticleItem from '@/components/NewsArticleItem.vue'
 
@@ -57,6 +70,7 @@ export default {
   components: {
     VanTab,
     VanTabs,
+    VanSticky,
     NewsArticleItem
   },
   data () {
@@ -69,7 +83,7 @@ export default {
     }
   },
   async mounted () {
-    const [categoryErr, categoryRes] = await this.$api.category()
+    const [categoryErr, categoryRes] = await this.$api.getCategory()
 
     if (categoryErr) {
       return this.$toast.fail('获取栏目数据失败，发生错误')
@@ -153,47 +167,69 @@ export default {
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
 
-.index_header {
-  height: common.baseSize(50);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f00;
-  color: #fff;
-  .logo_icon {
-    font-size: common.baseSize(50);
-    margin: 0 common.baseSize(10);
-  }
-  .search {
-    $height: common.baseSize(34);
+.index {
+  &_header {
+    height: common.baseSize(50);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    height: $height;
-    flex: 1;
-    border-radius: $height / 2;
-    background-color: rgba(255, 255, 255, 0.4);
-    .search_icon {
-      margin-right: common.baseSize(6);
-      font-size: common.baseSize(18);
-    }
-  }
-  .user {
+    background-color: #f00;
     color: #fff;
-    &_icon {
-      display: block;
+    .logo_icon {
+      font-size: common.baseSize(50);
       margin: 0 common.baseSize(10);
-      font-size: common.baseSize(24);
+    }
+    .search {
+      $height: common.baseSize(34);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: $height;
+      flex: 1;
+      border-radius: $height / 2;
+      background-color: rgba(255, 255, 255, 0.4);
+      .search_icon {
+        margin-right: common.baseSize(6);
+        font-size: common.baseSize(18);
+      }
+    }
+    .user {
+      color: #fff;
+      &_icon {
+        display: block;
+        margin: 0 common.baseSize(10);
+        font-size: common.baseSize(24);
+      }
     }
   }
-}
+  &_nav {
+    position: relative;
+  }
+  &_tablist {
+    ::v-deep .van-tab__text {
+      font-size: common.baseSize(16);
+    }
+    ::v-deep .van-tabs__wrap {
+      padding-right: common.baseSize(40);
+      height: common.baseSize(44);
+    }
+  }
+  &_cate-sticky {
+    position: absolute;
+    top: 0;
+    right: 0;
+    &_manager-btn {
+      @extend .index_cate-sticky;
+      width: common.baseSize(40);
+      height: common.baseSize(44);
+      font-size: common.baseSize(16);
+      border: none;
 
-.index_nav {
-  ::v-deep .van-tab__text {
-    font-size: common.baseSize(16);
+      &.fixed {
+        position: fixed;
+      }
+    }
   }
-  ::v-deep .van-tabs__wrap {
-    height: common.baseSize(44);
-  }
+
 }
 </style>

@@ -43,7 +43,6 @@ export default {
   $headerFontSize: common.baseSize(16);
   $height: common.baseSize(50);
   height: $height !important;
-
   ::v-deep .van-nav-bar {
     background-color: $backgroundColor;
     height: $height;
