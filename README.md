@@ -1,19 +1,16 @@
-# heimatoutiao
+# Vue 黑马头条项目
 
-## Project setup
+## 安装项目
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 运行开发服务器进行编译与热重载
 ```
-npm run serve
+npm start
 ```
 
-### Compiles and minifies for production
+### 编译打包到生产环境
 ```
 npm run build
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
