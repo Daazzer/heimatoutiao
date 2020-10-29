@@ -89,18 +89,42 @@ export default {
       return this.$toast.fail('获取栏目数据失败，发生错误')
     }
 
-    // 初始化数据结构，页面优化方式
-    this.tabNav.categoryItems = categoryRes.data.data.map(v => ({
-      // 拿到每条，新闻文章数据项的属性
-      ...v,
-      newsArticleItems: [],
-      pageIndex: 1,
-      pageSize: 4,
-      refreshing: false,
-      loading: false,
-      finished: false,
-      loadError: false
-    }))
+    let categories = JSON.parse(localStorage.getItem('heimatoutiao_categories'))
+    let categoriesData = categoryRes.data.data
+
+    if (categories) {
+      // 只拿 `关注` 和 `头条` 两个栏目
+      categoriesData = categoriesData.filter(({ name, id }) => (
+        id === 0 || id === 999 || name === '关注' || name === '头条'
+      ))
+
+      categories.activeCategories.unshift(...categoriesData)
+
+      this.tabNav.categoryItems = categories.activeCategories.map(v => ({
+        // 拿到每条，新闻文章数据项的属性
+        ...v,
+        newsArticleItems: [],
+        pageIndex: 1,
+        pageSize: 4,
+        refreshing: false,
+        loading: false,
+        finished: false,
+        loadError: false
+      }))
+    } else {
+      // 初始化数据结构，页面优化方式，如果本地自定义的栏目被清除掉了，则重新获取所有数据
+      this.tabNav.categoryItems = categoriesData.map(v => ({
+        // 拿到每条，新闻文章数据项的属性
+        ...v,
+        newsArticleItems: [],
+        pageIndex: 1,
+        pageSize: 4,
+        refreshing: false,
+        loading: false,
+        finished: false,
+        loadError: false
+      }))
+    }
   },
   methods: {
     refreshNewsArticle () {
@@ -110,9 +134,8 @@ export default {
       categoryItem.pageIndex = 1
       // 重新开始加载
       categoryItem.finished = false
-      this.loadNewsArticle(true).then(() => {
-        categoryItem.refreshing = false
-      })
+
+      this.loadNewsArticle(true).then(() => categoryItem.refreshing = false)
     },
     async loadNewsArticle (refresh) {
       // 当前栏目

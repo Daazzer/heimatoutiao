@@ -6,16 +6,16 @@
       <div class="catemanager_bar">
         <h4 class="catemanager_title">点击移除以下频道</h4>
         <VanGrid border>
-          <VanGridItem v-for="activeCategory in activeCategories" :key="activeCategory.id">
-            <van-button class="catemanager_cate-btn remove-cate" color="#f2f2f2">{{ activeCategory.name }}</van-button>
+          <VanGridItem v-for="(activeCategory, index) in activeCategories" :key="activeCategory.id">
+            <van-button class="catemanager_cate-btn remove-cate" color="#f2f2f2" :data-index="index">{{ activeCategory.name }}</van-button>
           </VanGridItem>
         </VanGrid>
       </div>
       <div class="catemanager_bar">
         <h4 class="catemanager_title">点击添加以下频道</h4>
         <VanGrid border>
-          <VanGridItem v-for="unusedCategory in unusedCategories" :key="unusedCategory.id">
-            <van-button class="catemanager_cate-btn add-cate" color="#f2f2f2">{{ unusedCategory.name }}</van-button>
+          <VanGridItem v-for="(unusedCategory, index) in unusedCategories" :key="unusedCategory.id">
+            <van-button class="catemanager_cate-btn add-cate" color="#f2f2f2" :data-index="index">{{ unusedCategory.name }}</van-button>
           </VanGridItem>
         </VanGrid>
       </div>
@@ -57,7 +57,7 @@ export default {
     }
 
     let categoriesData = res.data.data
-    // 直接去掉 `关注` 和 `头条两个栏目`
+    // 直接去掉 `关注` 和 `头条` 两个栏目
     categoriesData = categoriesData.filter(({ name, id }) => (
       id !== 0 && id !== 999 && name !== '关注' && name !== '头条'
     ))
@@ -75,16 +75,34 @@ export default {
   methods: {
     handleClick (e) {
       if (e.target.classList.contains('remove-cate')) {
-        this.removeCategory()
+        this.removeCategory(e)
       } else if (e.target.classList.contains('add-cate')) {
-        this.addCategory()
+        this.addCategory(e)
       }
     },
-    removeCategory () {
-      console.log('remove')
+    removeCategory (e) {
+      const index = e.target.dataset.index
+
+      const activeCate = this.activeCategories.splice(index, 1)
+
+      this.unusedCategories.push(...activeCate)
+
+      localStorage.setItem('heimatoutiao_categories', JSON.stringify({
+        activeCategories: this.activeCategories,
+        unusedCategories: this.unusedCategories
+      }))
     },
-    addCategory () {
-      console.log('add')
+    addCategory (e) {
+      const index = e.target.dataset.index
+
+      const unusedCate = this.unusedCategories.splice(index, 1)
+
+      this.activeCategories.push(...unusedCate)
+
+      localStorage.setItem('heimatoutiao_categories', JSON.stringify({
+        activeCategories: this.activeCategories,
+        unusedCategories: this.unusedCategories
+      }))
     }
   }
 }
