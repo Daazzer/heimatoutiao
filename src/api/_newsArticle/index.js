@@ -29,11 +29,31 @@ const getComments = (id, params) => axios.get(`/post_comment/${id}`, { params })
  */
 const postComment = (id, data) => axios.post(`/post_comment/${id}`, data).then(res => [null, res]).catch(err => [err])
 
+/**
+ * 搜索文章
+ * @param {Object} params 参数
+ * @param {string} params.keyword 搜索关键字
+ * @param {number} [params.pageIndex=1] 当前页码
+ * @param {number} [params.pageSize=11] 每页显示数据条数
+ * @returns {Promise<Response>}
+ */
+const searchArticle = params => axios.get('/post_search', { params }).then(res => [null, res]).catch(err => [err])
+
+/**
+ * 搜索推荐
+ * @param {Object} params 参数
+ * @param {string} params.keyword 搜索关键字
+ * @returns {Promise<Response>}
+ */
+const searchRecommendArticle = params => axios.get('/post_search_recommend', { params }).then(res => [null, res]).catch(err => [err])
+
 export default {
   getNewsArticle,
   getArticleDetialById,
   likeArticle,
   starArticle,
   getComments,
-  postComment
+  postComment,
+  searchArticle,
+  searchRecommendArticle
 }

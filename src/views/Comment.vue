@@ -172,15 +172,5 @@ export default {
       padding-bottom: common.baseSize(120);
     }
   }
-  // &_bottom {
-  //   margin-top: common.baseSize(22);
-  //   padding-bottom: common.baseSize(52);
-  //   text-align: center;
-  //   font-size: common.baseSize(14);
-  //   color: #707070;
-  //   &.inputting {
-  //     padding-bottom: common.baseSize(120);
-  //   }
-  // }
 }
 </style>

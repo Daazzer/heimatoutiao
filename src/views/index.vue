@@ -4,9 +4,9 @@
       <div class="logo">
         <span class="logo_icon iconfont iconnew"></span>
       </div>
-      <div class="search">
+      <div class="search" @click="$router.push('/search')">
         <van-icon class="search_icon" name="search" />
-        <span>搜索商品</span>
+        <span>搜索新闻</span>
       </div>
       <router-link class="user" :to="`/personal/${id}`">
         <van-icon class="user_icon" name="user-circle-o" />

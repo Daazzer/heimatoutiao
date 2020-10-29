@@ -30,6 +30,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "cateManager" */ '@/views/CateManager.vue')
   },
   {
+    path: '/search',
+    name: 'Search',
+    component: () => import(/* webpackChunkName: "search" */ '@/views/Search.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
