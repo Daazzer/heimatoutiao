@@ -20,14 +20,14 @@ export const timeDiff = unformatDate => {
   const dateBefore = new Date(unformatDate)
   const yearBefore = dateBefore.getUTCFullYear()
   const monthBefore = dateBefore.getUTCMonth() + 1
-  const dayBefore = dateBefore.getUTCDay()
+  const dayBefore = dateBefore.getUTCDate()
   const hoursBefore = dateBefore.getUTCHours()
   const minuteBefore = dateBefore.getUTCMinutes()
   // 现在的时间
   const dateNow = new Date(Date.now())
   const yearNow = dateNow.getUTCFullYear()
   const monthNow = dateNow.getUTCMonth() + 1
-  const dayNow = dateNow.getUTCDay()
+  const dayNow = dateNow.getUTCDate()
   const hoursNow = dateNow.getUTCHours()
   const minuteNow = dateNow.getUTCMinutes()
 

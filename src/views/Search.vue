@@ -119,11 +119,12 @@ export default {
 
 .search {
   &-header {
-    height: common.baseSize(50) !important;
+    $headHeight: common.baseSize(50);
+    height: $headHeight !important;
     ::v-deep {
       .van-nav-bar {
         display: flex;
-        height: common.baseSize(50);
+        height: $headHeight;
         background-color: #f2f2f2;
         .van-icon-arrow-left, &__text {
           font-size: common.baseSize(15);
@@ -133,19 +134,20 @@ export default {
           font-size: common.baseSize(12);
           color: #202020;
         }
-        &__left {
-          position: static;
+        @mixin navbarUtil($pos: null, $p: null) {
+          position: $pos;
+          padding: $p;
           display: flex;
           justify-content: center;
           align-items: center;
+        }
+        &__left {
+          @include navbarUtil(static, 0);
           width: common.baseSize(40);
-          padding: 0;
         }
         &__title {
+          @include navbarUtil();
           flex: 1;
-          display: flex;
-          justify-content: center;
-          align-items: center;
           max-width: none;
           width: 80%;
           height: common.baseSize(50);
@@ -155,11 +157,7 @@ export default {
           }
         }
         &__right {
-          position: static;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 0;
+          @include navbarUtil(static, 0);
           width: common.baseSize(60);
         }
       }

@@ -233,9 +233,6 @@ export default {
       height: common.baseSize(44);
       font-size: common.baseSize(16);
       border: none;
-      &.fixed {
-        position: fixed;
-      }
     }
   }
 }
