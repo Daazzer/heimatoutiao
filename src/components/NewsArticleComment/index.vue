@@ -1,7 +1,8 @@
 <template>
   <div v-if="articleComments && articleComments.length > 0" class="comment">
+    <!-- 如果不传 maxShow prop 则会全部显示 -->
     <div
-      v-for="(articleComment, index) in articleComments.filter((v, i) => maxShow ? i < maxShow : true)"
+      v-for="articleComment in articleComments.filter((v, i) => maxShow ? i < maxShow : true)"
       :key="articleComment.id"
       class="comment_wrapper"
     >
@@ -13,14 +14,14 @@
         </div>
         <span
           class="comment_reply-btn"
-          @click="replycomment($event, index)"
+          @click="replyComment($event, articleComment)"
         >回复</span>
       </div>
       <!-- 插入评论回复 -->
       <NewsArticleCommentReply
         v-if="articleComment.parent"
         :parent="articleComment.parent"
-        @replycomment="handleReplyComment"
+        @replycomment="replyComment"
       />
       <p class="comment_text">{{ articleComment.content }}</p>
     </div>
@@ -42,13 +43,8 @@ export default {
     NewsArticleCommentReply
   },
   methods: {
-    replycomment (e, index) {
-      // const userName = this.articleComments[index].user.nickname
-      const replyUser = this.articleComments[index]
-      this.$emit('replycomment', replyUser, e)
-    },
-    handleReplyComment (replyUser, e) {
-      this.$emit('replycomment', replyUser, e)
+    replyComment (e, replyUser) {
+      this.$emit('replycomment', e, replyUser)
     }
   },
   filters: {

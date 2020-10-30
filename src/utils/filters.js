@@ -18,16 +18,16 @@ export const dateFormat = unformatDate => {
 export const timeDiff = unformatDate => {
   // 以前的时间
   const dateBefore = new Date(unformatDate)
-  const yearBefore = dateBefore.getFullYear()
-  const monthBefore = dateBefore.getMonth() + 1
-  const dayBefore = dateBefore.getDay()
+  const yearBefore = dateBefore.getUTCFullYear()
+  const monthBefore = dateBefore.getUTCMonth() + 1
+  const dayBefore = dateBefore.getUTCDay()
   const hoursBefore = dateBefore.getUTCHours()
   const minuteBefore = dateBefore.getUTCMinutes()
   // 现在的时间
   const dateNow = new Date(Date.now())
-  const yearNow = dateNow.getFullYear()
-  const monthNow = dateNow.getMonth() + 1
-  const dayNow = dateNow.getDay()
+  const yearNow = dateNow.getUTCFullYear()
+  const monthNow = dateNow.getUTCMonth() + 1
+  const dayNow = dateNow.getUTCDay()
   const hoursNow = dateNow.getUTCHours()
   const minuteNow = dateNow.getUTCMinutes()
 

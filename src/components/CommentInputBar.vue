@@ -1,16 +1,16 @@
 <template>
   <div @click="$emit('click', $event)" class="comment-input-bar">
-    <div v-show="isInputting === false" class="comment-input-bar_wrapper">
+    <div v-show="expand === false" class="comment-input-bar_wrapper">
       <input
         type="text"
         placeholder="写跟帖"
         @focus="handleFocus"
       />
       <div class="btn-group">
-        <button @click="gotoComment">
+        <button @click="$emit('click-comment')">
           <van-icon
             class="iconfont iconpinglun"
-            :badge="getCommentNum"
+            :badge="commentNum"
           />
         </button>
         <button
@@ -24,7 +24,7 @@
         <button class="iconfont iconfenxiang"></button>
       </div>
     </div>
-    <div v-show="isInputting === true" class="comment-input-bar_wrapper input">
+    <div v-show="expand === true" class="comment-input-bar_wrapper input">
       <textarea
         ref="commentInputArea"
         cols="5"
@@ -56,7 +56,7 @@
 <script>
 export default {
   name: 'CommentInputBar',
-  props: ['article', 'isInputting', 'replyUser'],
+  props: ['article', 'expand', 'replyUser'],
   data () {
     return {
       inputCommentText: ''
@@ -105,30 +105,31 @@ export default {
         this.$emit('sendcomment')
       }
     },
-    gotoComment () {
-      if (this.$route.name === 'Comment') {
-        return
-      }
-      this.$router.push(`/comment/${this.article.id}`)
-    },
     handleFocus () {
-      setTimeout(() => this.$refs.commentInputArea.focus(), 100)
+      setTimeout(() => this.$refs.commentInputArea.focus())
 
       this.$emit('inputting')
     }
   },
   computed: {
-    getCommentNum () {
-      const commentLen = this.article.comment_length
-      if (commentLen <= 0) {
+    commentNum () {
+      const commentNum = this.article.comment_length
+      if (commentNum <= 0) {
         return ''
-      } else if (commentLen > 99) {
+      } else if (commentNum > 99) {
         return '99+'
       }
-      return commentLen
+      return commentNum
     },
     replyUserName () {
       return this.replyUser === null ? '' : this.replyUser.user.nickname
+    }
+  },
+  watch: {
+    expand (oldVal) {
+      if (oldVal) {
+        this.handleFocus()
+      }
     }
   }
 }
@@ -158,15 +159,15 @@ export default {
       border: none;
     }
 
-    %commentInput {
+    @mixin commentInput {
+      flex: 1;
       font-size: common.baseSize(14);
       color: #333;
       background-color: #d7d7d7;
     }
 
     textarea {
-      @extend %commentInput;
-      flex: 1;
+      @include commentInput;
       padding: common.baseSize(12) common.baseSize(20);
       width: common.baseSize(260);
       height: common.baseSize(90);
@@ -174,10 +175,9 @@ export default {
       resize: none;
     }
     input {
-      @extend %commentInput;
-      flex: 1;
-      padding: common.baseSize(8) common.baseSize(20);
+      @include commentInput;
       $height: common.baseSize(30);
+      padding: common.baseSize(8) common.baseSize(20);
       height: $height;
       border-radius: $height / 2;
     }

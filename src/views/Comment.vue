@@ -21,10 +21,9 @@
         />
       </van-list>
     </van-pull-refresh>
-    <!-- <div :class="{ comment_bottom: true, inputting: isInputting }">我也是有底线的</div> -->
     <CommentInputBar
       :article="article"
-      :isInputting="isInputting"
+      :expand="isInputting"
       :replyUser="replyUser"
       @click.stop
       @inputting="isInputting = true"
@@ -50,23 +49,6 @@ export default {
   },
   data () {
     return {
-      article: {
-        title: '文章标题',
-        content: '文章内容',
-        comment_length: 0,
-        user: {
-          nickname: '作者',
-          create_date: 'xxxx-xx-xx'
-        },
-        cover: [
-          { url: '' }
-        ],
-        has_follow: false,
-        has_like: false,
-        has_star: false,
-        type: 1,
-        like_length: 0,
-      },
       commentList: {
         refreshing: false,
         loading: false,
@@ -76,12 +58,13 @@ export default {
         pageSize: 6,
         comments: []
       },
+      article: {},
       replyUser: null,
       isInputting: false
     }
   },
   mounted () {
-    this.refreshPage()
+    this.initArticle()
   },
   methods: {
     async initArticle () {
@@ -94,8 +77,8 @@ export default {
 
       this.article = getArticleDetialRes.data.data
     },
-    async loadComment (isReset = false) {
-      if (this.commentList.comments.length === 0 || isReset) {
+    async loadComment (reset) {
+      if (this.commentList.comments.length === 0 || reset) {
         this.commentList.pageIndex = 1
       } else {
         this.commentList.pageIndex++
@@ -106,19 +89,11 @@ export default {
         pageSize: this.commentList.pageSize
       })
 
-      if (getCommentsErr || getCommentsRes.data.statusCode) {
-        this.commentList.comments = isReset ? [] : this.commentList.comments
-      }
-
       if (getCommentsErr) {
+        this.commentList.loading = false
         this.commentList.error = true
         return
-      } else if (getCommentsRes.data.statusCode) {
-        this.commentList.loading = false
-        return
       }
-
-      const comments = isReset ? [] : this.commentList.comments
 
       const resComments = getCommentsRes.data.data.map(v => {
         const baseURL = axios.defaults.baseURL
@@ -128,22 +103,22 @@ export default {
         return v
       })
 
-      comments.push(...resComments)
+      if (reset) {
+        this.commentList.comments = resComments
+      } else {
+        this.commentList.comments.push(...resComments)
+      }
 
       if (resComments.length < this.commentList.pageSize) {
         this.commentList.finished = true
       }
 
-      // 响应式数据，用于动态刷新页面
-      this.commentList = {
-        ...this.commentList,
-        comments
-      }
-
       this.commentList.loading = false
     },
     refreshPage () {
-      this.commentList.finished = false
+      // 刷新时，此时页面数据还没满一屏，设置 finished 为 false 会先立马触发 load 事件
+      this.commentList.finished = false  // 触发了 load 事件
+      this.commentList.error = false
       this.initArticle()
         .then(() => this.loadComment(true))
         .then(() => this.commentList.refreshing = false)
@@ -154,7 +129,7 @@ export default {
       this.refreshPage()
       window.scrollTo(0, 0)
     },
-    handleReplyComment (replyUser, e) {
+    handleReplyComment (e, replyUser) {
       e.stopPropagation()
       this.isInputting = true
       this.replyUser = replyUser

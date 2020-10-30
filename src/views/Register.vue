@@ -91,9 +91,8 @@ export default {
 
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
-$page: register;
 
-.#{$page} {
+.register {
   padding: common.baseSize(20);
   &-form_btn {
     margin-top: common.baseSize(30);

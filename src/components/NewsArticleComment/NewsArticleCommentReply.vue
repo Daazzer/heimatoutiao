@@ -6,13 +6,13 @@
           <h3>{{ parent.user.nickname }}</h3>
           <span class="comment-reply_time">{{ parent.create_date | timeDiff }}</span>
         </div>
-        <span class="comment-reply_reply-btn" @click="replycomment">回复</span>
+        <span class="comment-reply_reply-btn" @click="replyComment($event, parent)">回复</span>
       </div>
       <!-- 插入评论回复 -->
       <NewsArticleCommentReply
         v-if="parent.parent"
         :parent="parent.parent"
-        @replycomment="handleReplyComment"
+        @replycomment="replyComment"
       />
       <p class="comment-reply_text">{{ parent.content }}</p>
     </div>
@@ -29,13 +29,8 @@ export default {
     timeDiff
   },
   methods: {
-    replycomment (e) {
-      // const userName = this.parent.user.nickname
-      const replyUser = this.parent
-      this.$emit('replycomment', replyUser, e)
-    },
-    handleReplyComment (replyUser, e) {
-      this.$emit('replycomment', replyUser, e)
+    replyComment (e, replyUser) {
+      this.$emit('replycomment', e, replyUser)
     }
   }
 }

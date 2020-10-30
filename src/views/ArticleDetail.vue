@@ -23,14 +23,19 @@
       <div class="content">
         <article v-if="article.type === 1" v-html="article.content"></article>
         <video
+          v-if="article.type === 2 && article.cover"
           :poster="article.cover[0].url"
           :src="article.content"
-          v-if="article.type === 2"
           controls
         ></video>
       </div>
       <div class="opt">
-        <van-button round size="mini" class="like" @click="likeThisArticle">
+        <van-button
+          round
+          size="mini"
+          class="like"
+          @click="likeThisArticle"
+        >
           <van-icon
             :name="`good-job${ article.has_like ? '' : '-o'}`"
             :class="{ active: article.has_like, opt_icon: true }"
@@ -50,7 +55,7 @@
         @replycomment="handleReplyComment"
       />
       <van-button
-        v-if="article.comments.length > 2"
+        v-if="article.comments && article.comments.length > 2"
         round
         class="comment_more"
         @click="$router.push(`/comment/${article.id}`)"
@@ -58,9 +63,10 @@
     </div>
     <CommentInputBar
       :article="article"
-      :isInputting="isInputting"
+      :expand="isInputting"
       :replyUser="replyUser"
       @click.stop
+      @click-comment="$router.push(`/comment/${article.id}`)"
       @inputting="isInputting = true"
       @stararticle="article.has_star = !article.has_star"
       @sendcomment="handleSendComment"
@@ -86,22 +92,8 @@ export default {
   data () {
     return {
       article: {
-        title: '文章标题',
-        content: '文章内容',
-        comment_length: 0,
-        user: {
-          nickname: '作者',
-          create_date: 'xxxx-xx-xx'
-        },
-        cover: [
-          { url: '' }
-        ],
-        has_follow: false,
-        has_like: false,
-        has_star: false,
-        type: 1,
-        like_length: 0,
-        comments: []
+        user: {},
+        like_length: 0
       },
       isInputting: false,
       replyUser: null
@@ -123,7 +115,7 @@ export default {
 
       this.article = {
         ...getArticleDetialRes.data.data,
-        comments: []
+        ...this.article
       }
 
       const [getCommentsErr, getCommentsRes] = await this.$api.getComments(this.article.id)
@@ -139,11 +131,9 @@ export default {
         v.user.head_img = userHeadImg === '' ? defaultImg : baseURL + userHeadImg
         return v
       })
-      // 为了响应式数据，目的为了视图更新
-      this.article = {
-        ...this.article,
-        comments
-      }
+
+      // 响应式更新 `data` 的深度成员，这里添加了一个 comments 成员
+      this.$set(this.article, 'comments', comments)
     },
     async followThisUser () {
       const hasfollow = this.article.has_follow
@@ -163,9 +153,8 @@ export default {
         return
       }
 
-      this.$toast.success(res.data.message)
-
       this.article.has_follow = !hasfollow
+      this.$toast.success(res.data.message)
     },
     async likeThisArticle () {
       const [err, res] = await this.$api.likeArticle(this.article.id)
@@ -190,42 +179,11 @@ export default {
       this.initPage()
       window.scrollTo(0, 0)
     },
-    handleReplyComment (replyUser, e) {
+    handleReplyComment (e, replyUser) {
       e.stopPropagation()
       this.isInputting = true
       this.replyUser = replyUser
     }
-    /**
-     * 判断当前元素是否为给定元素的后代
-     * @param {el} 开始往上查找的元素
-     * @param {selector} 祖先元素选择器
-     * @returns {boolean}
-     */
-    /* isAncestorElementOf (el, selector) {
-      const ancestor = document.querySelector(selector)
-
-      if (el === ancestor) {
-        return true
-      }
-
-      let parentElement = el.parentElement
-
-      while (parentElement !== ancestor && parentElement !== document.body) {
-        let o = parentElement
-        parentElement = o.parentElement
-      }
-
-      if (parentElement === document.body) {
-        return false
-      }
-
-      return true
-    }, */
-    // handleClick () {
-    //   if (!this.isAncestorElementOf(e.target, '#leaveComment')) {
-    //     this.isFocus = false
-    //   }
-    // }
   },
   filters: {
     dateFormat
@@ -236,14 +194,12 @@ export default {
 <style lang='scss' scoped>
 @use "@/styles/common.scss";
 
-.artical-detail {
-  height: 100vh;
-}
 ::v-deep .header {
-  height: common.baseSize(50);
+  height: common.baseSize(50) !important;
 
   &, .van-nav-bar {
     background-color: #f2f2f2;
+    height: common.baseSize(50);
   }
   .icon {
     &-back {
@@ -291,14 +247,16 @@ export default {
     line-height: common.baseSize(24);
     font-size: common.baseSize(15);
 
-    ::v-deep a {
-      display: inline-block;
-    }
-    ::v-deep img {
-      width: 100%;
-    }
-    ::v-deep p {
-      margin: .5em 0 .8em;
+    ::v-deep {
+      a {
+        display: inline-block;
+      }
+      img {
+        width: 100%;
+      }
+      p {
+        margin: .5em 0 .8em;
+      }
     }
   }
 }
@@ -336,7 +294,6 @@ video {
 .keeps {
   border-top: 5px solid #e4e4e4;
   padding: common.baseSize(25) 0 common.baseSize(52);
-
   &.inputting {
     padding: common.baseSize(25) 0 common.baseSize(120);
   }

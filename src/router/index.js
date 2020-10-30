@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { Toast } from 'vant'
 
 Vue.use(VueRouter)
 
@@ -73,6 +74,31 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+// 全局路由守卫
+router.beforeEach((to, from, next) => {
+  const userInfo = JSON.parse(localStorage.getItem('heimatoutiao_userInfo'))
+  const { name: toRouteName } = to
+  const { name: fromRouteName } = from
+
+  switch (toRouteName) {
+    case 'Personal':
+      if (!userInfo) {
+        next({ name: 'Login' })
+        return
+      }
+      next()
+      break
+    case 'Login':
+      if (!userInfo && fromRouteName === 'Personal') {
+        Toast.success('退出成功')
+      }
+      next()
+      break
+    default:
+      next()
+  }
 })
 
 export default router

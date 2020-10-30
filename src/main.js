@@ -10,7 +10,6 @@ import {
 } from 'vant'
 import App from './App.vue'
 import router from './router'
-// import mixins from './utils/mixins'
 import api from './api'
 
 Vue.config.productionTip = false
@@ -24,7 +23,6 @@ Vue
   .use(PullRefresh)
   .use(NavBar)
 
-// Vue.mixin(mixins)
 Vue.prototype.$api = api
 
 new Vue({

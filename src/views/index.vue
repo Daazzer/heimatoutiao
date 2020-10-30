@@ -25,20 +25,20 @@
           :key="categoryItem.id"
         >
           <van-pull-refresh
-            v-model="tabNav.categoryItems[tabNav.active].refreshing"
+            v-model="categoryItem.refreshing"
             success-text="刷新成功"
             @refresh="refreshNewsArticle"
           >
             <van-list
-              v-model="tabNav.categoryItems[tabNav.active].loading"
-              :finished="tabNav.categoryItems[tabNav.active].finished"
-              :error.sync="tabNav.categoryItems[tabNav.active].loadError"
+              v-model="categoryItem.loading"
+              :finished="categoryItem.finished"
+              :error.sync="categoryItem.loadError"
               finished-text="没有更多了"
               error-text="请求失败，点击重新加载"
               @load="loadNewsArticle"
             >
               <NewsArticleItem
-                v-for="newsArticleItem in tabNav.categoryItems[tabNav.active].newsArticleItems"
+                v-for="newsArticleItem in categoryItem.newsArticleItems"
                 :key="newsArticleItem.id"
                 :news="newsArticleItem"
               />
@@ -83,105 +83,91 @@ export default {
     }
   },
   async mounted () {
+    // 获取栏目数据
     const [categoryErr, categoryRes] = await this.$api.getCategory()
 
     if (categoryErr) {
       return this.$toast.fail('获取栏目数据失败，发生错误')
     }
 
-    let categories = JSON.parse(localStorage.getItem('heimatoutiao_categories'))
+    const customCategories = JSON.parse(localStorage.getItem('heimatoutiao_categories'))
     let categoriesData = categoryRes.data.data
 
-    if (categories) {
+    // 定义好栏目项的初始数据
+    const mapCategoryItems = categoryItem => ({
+      ...categoryItem,
+      newsArticleItems: [],
+      pageIndex: 1,
+      pageSize: 4,
+      refreshing: false,
+      loading: false,
+      finished: false,
+      loadError: false
+    })
+
+    if (customCategories) {
       // 只拿 `关注` 和 `头条` 两个栏目
       categoriesData = categoriesData.filter(({ name, id }) => (
         id === 0 || id === 999 || name === '关注' || name === '头条'
       ))
 
-      categories.activeCategories.unshift(...categoriesData)
+      // 在自定义的类别的数组开头添加过滤后的响应数据
+      customCategories.activeCategories.unshift(...categoriesData)
 
-      this.tabNav.categoryItems = categories.activeCategories.map(v => ({
-        // 拿到每条，新闻文章数据项的属性
-        ...v,
-        newsArticleItems: [],
-        pageIndex: 1,
-        pageSize: 4,
-        refreshing: false,
-        loading: false,
-        finished: false,
-        loadError: false
-      }))
+      // 拿到每条，新闻文章数据项的属性
+      this.tabNav.categoryItems = customCategories.activeCategories.map(mapCategoryItems)
     } else {
-      // 初始化数据结构，页面优化方式，如果本地自定义的栏目被清除掉了，则重新获取所有数据
-      this.tabNav.categoryItems = categoriesData.map(v => ({
-        // 拿到每条，新闻文章数据项的属性
-        ...v,
-        newsArticleItems: [],
-        pageIndex: 1,
-        pageSize: 4,
-        refreshing: false,
-        loading: false,
-        finished: false,
-        loadError: false
-      }))
+      // 如果本地自定义的栏目被清除掉了，则重新获取所有数据
+      this.tabNav.categoryItems = categoriesData.map(mapCategoryItems)
     }
   },
   methods: {
     refreshNewsArticle () {
       // 当前栏目
       const categoryItem = this.tabNav.categoryItems[this.tabNav.active]
-      // 重置当前页索引，重置新闻文章
-      categoryItem.pageIndex = 1
-      // 重新开始加载
+
+      // 当前栏目的文章重新开始加载
       categoryItem.finished = false
+      categoryItem.loadError = false
 
       this.loadNewsArticle(true).then(() => categoryItem.refreshing = false)
     },
-    async loadNewsArticle (refresh) {
+    async loadNewsArticle (reset) {
       // 当前栏目
       const categoryItem = this.tabNav.categoryItems[this.tabNav.active]
 
-      categoryItem.loading = true
-
-      // 判断是否有新闻文章
-      if (categoryItem.newsArticleItems.length === 0 || refresh) {
+      // 判断是否有新闻文章，或者是否重新加载
+      if (categoryItem.newsArticleItems.length === 0 || reset) {
         categoryItem.pageIndex = 1
       } else {
         categoryItem.pageIndex++
       }
 
-      const [postErr, postRes] = await this.$api.getNewsArticle({
+      const [newsArticleErr, newsArticleRes] = await this.$api.getNewsArticle({
         category: categoryItem.id,
         pageSize: categoryItem.pageSize,
         pageIndex: categoryItem.pageIndex
       })
 
-      if (postErr) {
-        return categoryItem.loadError = true
+      if (newsArticleErr) {
+        categoryItem.loadError = true
+        categoryItem.loading = false
+        return
       }
 
-      if (postRes.data.data.length < categoryItem.pageSize) {
+      if (newsArticleRes.data.data.length < categoryItem.pageSize) {
         // 返回数据条数小于当前设定的分页大小，说明是最后一条
         categoryItem.finished = true
       }
 
-      if (refresh) {
-        categoryItem.newsArticleItems = postRes.data.data
+      // 判断是否刷新重置了
+      if (reset) {
+        categoryItem.newsArticleItems = newsArticleRes.data.data
       } else {
-        categoryItem.newsArticleItems.push(...postRes.data.data)
+        categoryItem.newsArticleItems.push(...newsArticleRes.data.data)
       }
 
       categoryItem.loading = false
-    }
-  },
-  watch: {
-    'tabNav.active' () {
-      const categoryItem = this.tabNav.categoryItems[this.tabNav.active]
-
-      // 如果当前栏目没有新闻数据，则切换时才加载
-      if (categoryItem.newsArticleItems.length === 0 && !categoryItem.finished) {
-        this.loadNewsArticle()
-      }
     }
   }
 }
@@ -247,12 +233,10 @@ export default {
       height: common.baseSize(44);
       font-size: common.baseSize(16);
       border: none;
-
       &.fixed {
         position: fixed;
       }
     }
   }
-
 }
 </style>

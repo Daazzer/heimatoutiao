@@ -98,15 +98,13 @@ export default {
 <style lang="scss" scoped>
 @use "@/styles/common.scss";
 
-$page: login;
-.#{$page} {
+.login {
   padding: common.baseSize(20);
-}
-
-.#{$page}-form {
-  .tips {
-    text-align: right;
-    margin-bottom: common.baseSize(36);
+  &-form {
+    .tips {
+      text-align: right;
+      margin-bottom: common.baseSize(36);
+    }
   }
 }
 </style>
