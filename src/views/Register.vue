@@ -79,7 +79,6 @@ export default {
         this.$toast.fail('注册失败，发生错误')
       } else if (res.data.statusCode) {
         this.$toast.fail('danger', '注册失败')
-        console.log(res)
       } else {
         this.$toast.success(res.data.message)
         this.$router.push('/login')

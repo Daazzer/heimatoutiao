@@ -10,6 +10,6 @@ export default {
 
 <style lang="scss">
 @import "./styles/reset.css";
-@import "./fonts/iconfont.css";
+@import "./assets/fonts/iconfont.css";
 @import "./styles/common.scss";
 </style>
