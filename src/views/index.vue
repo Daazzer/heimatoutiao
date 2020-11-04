@@ -91,6 +91,7 @@ export default {
     }
 
     const customCategories = JSON.parse(localStorage.getItem('heimatoutiao_categories'))
+    const token = JSON.parse(localStorage.getItem('heimatoutiao_userInfo') || '{}').token
     let categoriesData = categoryRes.data.data
 
     // 定义好栏目项的初始数据
@@ -105,7 +106,8 @@ export default {
       loadError: false
     })
 
-    if (customCategories) {
+    // 有自定义栏目数据并且登录了才能获取自定义栏目数据
+    if (customCategories && token) {
       // 只拿 `关注` 和 `头条` 两个栏目
       categoriesData = categoriesData.filter(({ name, id }) => (
         id === 0 || id === 999 || name === '关注' || name === '头条'

@@ -29,7 +29,7 @@
         <div class="news_img-group">
           <van-image
             class="image"
-            v-for="(cover, index) in news.cover"
+            v-for="(cover, index) in newsCover"
             :key="index"
             :src="cover.url"
             alt="新闻图片"
@@ -62,13 +62,28 @@
 </template>
 
 <script>
+import axios from '@/utils/axios_http-config'
 export default {
   name: 'NewsArticleItem',
   props: ['news'],
+  data () {
+    return {
+      newsCover: []
+    }
+  },
   computed: {
     articleDetailLink () {
       return '/articleDetail/' + this.news.id
     }
+  },
+  mounted () {
+    this.newsCover = this.news.cover
+    this.newsCover.forEach(c => {
+      // 检测是否是 http 路径图片，如果不是则拼接本地地址
+      if(!/^http/.test(c.url)) {
+        c.url = axios.defaults.baseURL + c.url
+      }
+    })
   }
 }
 </script>

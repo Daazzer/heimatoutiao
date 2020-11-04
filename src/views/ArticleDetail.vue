@@ -113,6 +113,13 @@ export default {
         return this.$toast.fail('获取文章数据错误')
       }
 
+      getArticleDetialRes.data.data.cover.forEach(c => {
+        // 检测是否是 http 路径图片，如果不是则拼接本地地址
+        if(!/^http/.test(c.url)) {
+          c.url = axios.defaults.baseURL + c.url
+        }
+      })
+
       this.article = {
         ...getArticleDetialRes.data.data,
         ...this.article
